@@ -14,7 +14,7 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         Admin::updateOrCreate(
-            ['email' => 'admin@treebank.com'], // Check by email
+            ['email' => 'admin@treebank.com'],
             [
                 'name' => 'Super Admin',
                 'email' => 'admin@treebank.com',

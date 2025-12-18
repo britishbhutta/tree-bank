@@ -12,18 +12,28 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->integer('id')->unsigned()->autoIncrement();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone')->nullable();
-            $table->string('address')->nullable();
-            $table->string('role')->nullable();
-            $table->tinyInteger('is_active')->default('1')->comment('1 = Active, 2 = Inactive' );
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
-        });
+        $table->integer('id')->unsigned()->autoIncrement();
+        $table->string('name');
+        
+        // Personal info
+        $table->string('email')->nullable()->unique();
+        $table->string('phone')->nullable();
+        $table->string('address')->nullable();
+        
+        // Company info
+        $table->string('company_email')->nullable()->unique();
+        $table->string('company_phone')->nullable();
+        $table->string('company_address')->nullable();
+        
+        $table->tinyInteger('role')->nullable()->comment('1=User,2=Company');
+        
+        $table->tinyInteger('is_active')->default(1)->comment('1 = Active, 2 = Inactive');
+        $table->timestamp('email_verified_at')->nullable();
+        $table->string('password');
+        $table->rememberToken();
+        $table->timestamps();
+    });
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

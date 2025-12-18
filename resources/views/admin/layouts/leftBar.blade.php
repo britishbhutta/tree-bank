@@ -4,7 +4,7 @@
             <ul id="side-menu">
                 <li class="menu-title">Navigation</li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('admin.dashboard') }}">
                         <i class="mdi mdi-view-dashboard-outline"></i>
                         <span> Dashboard </span>
                     </a>
@@ -18,10 +18,10 @@
                     <div class="collapse" id="users">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="#">Create</a>
+                                <a href="{{ route('admin.users.create') }}">Create</a>
                             </li>
                             <li>
-                                <a href="#">Listing</a>
+                                <a href="{{ route('admin.users.index') }}">Listing</a>
                             </li>
                         </ul>
                     </div>

@@ -3,107 +3,144 @@
         <div id="sidebar-menu">
             <ul id="side-menu">
                 <li class="menu-title">Navigation</li>
-                <li>
+
+                <!-- Dashboard -->
+                <li class="{{ request()->routeIs('admin.dashboard') ? 'menuitem-active' : '' }}">
                     <a href="{{ route('admin.dashboard') }}">
                         <i class="mdi mdi-view-dashboard-outline"></i>
-                        <span> Dashboard </span>
+                        <span>Dashboard</span>
                     </a>
                 </li>
-                <li>
-                    <a href="#users" data-bs-toggle="collapse">
+
+                <!-- Users -->
+                <li class="{{ request()->routeIs('admin.users.*') ? 'menuitem-active' : '' }}">
+                    <a href="#users" data-bs-toggle="collapse"
+                       class="{{ request()->routeIs('admin.users.*') ? '' : 'collapsed' }}">
                         <i class="mdi mdi-account-multiple-outline"></i>
-                        <span> Users </span>
+                        <span>Users</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="users">
+                    <div class="collapse {{ request()->routeIs('admin.users.*') ? 'show' : '' }}" id="users">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{ route('admin.users.create') }}">Create</a>
+                                <a href="{{ route('admin.users.create') }}"
+                                   class="{{ request()->routeIs('admin.users.create') ? 'active' : '' }}">
+                                    Create
+                                </a>
                             </li>
                             <li>
-                                <a href="{{ route('admin.users.index') }}">Listing</a>
+                                <a href="{{ route('admin.users.index') }}"
+                                   class="{{ request()->routeIs('admin.users.index') ? 'active' : '' }}">
+                                    Listing
+                                </a>
                             </li>
                         </ul>
                     </div>
                 </li>
-                <li>
-                    <a href="#donations" data-bs-toggle="collapse">
-                        <i class="mdi mdi-cash-plus
-                        "></i>
-                        <span> Donations </span>
+
+                <!-- Donations -->
+                <li class="{{ request()->routeIs('admin.donation.*') ? 'menuitem-active' : '' }}">
+                    <a href="#donations" data-bs-toggle="collapse"
+                       class="{{ request()->routeIs('admin.donation.*') ? '' : 'collapsed' }}">
+                        <i class="mdi mdi-cash-plus"></i>
+                        <span>Donations</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="donations">
+                    <div class="collapse {{ request()->routeIs('admin.donation.*') ? 'show' : '' }}" id="donations">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="#">Create</a>
+                                <a href="{{ route('admin.donation.create') }}"
+                                   class="{{ request()->routeIs('admin.donation.create') ? 'active' : '' }}">
+                                    Create
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.donation.index') }}"
+                                   class="{{ request()->routeIs('admin.donation.index') ? 'active' : '' }}">
+                                    List
+                                </a>
                             </li>
                         </ul>
                     </div>
                 </li>
-                <li>
-                    <a href="#projects" data-bs-toggle="collapse">
+
+                <!-- Projects -->
+                <li class="{{ request()->routeIs('admin.projects.*') ? 'menuitem-active' : '' }}">
+                    <a href="#projects" data-bs-toggle="collapse"
+                       class="{{ request()->routeIs('admin.projects.*') ? '' : 'collapsed' }}">
                         <i class="mdi mdi-folder-outline"></i>
-                        <span> Projects </span>
+                        <span>Projects</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="projects">
+                    <div class="collapse {{ request()->routeIs('admin.projects.*') ? 'show' : '' }}" id="projects">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="#">Create</a>
+                                <a href="{{ route('admin.projects.create') }}"
+                                   class="{{ request()->routeIs('admin.projects.create') ? 'active' : '' }}">
+                                    Create
+                                </a>
                             </li>
                             <li>
-                                <a href="#">Listing</a>
+                                <a href="{{ route('admin.projects.index') }}"
+                                   class="{{ request()->routeIs('admin.projects.index') ? 'active' : '' }}">
+                                    Listing
+                                </a>
                             </li>
                         </ul>
                     </div>
                 </li>
-                <li>
-                    <a href="#events" data-bs-toggle="collapse">
+
+                <!-- Events / Workshops -->
+                <li class="{{ request()->routeIs('admin.workshop.*') ? 'menuitem-active' : '' }}">
+                    <a href="#events" data-bs-toggle="collapse"
+                       class="{{ request()->routeIs('admin.workshop.*') ? '' : 'collapsed' }}">
                         <i class="mdi mdi-calendar"></i>
-                        <span> Events </span>
+                        <span>Events</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="events">
+                    <div class="collapse {{ request()->routeIs('admin.workshop.*') ? 'show' : '' }}" id="events">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="#">Create</a>
+                                <a href="{{ route('admin.workshop.create') }}"
+                                   class="{{ request()->routeIs('admin.workshop.create') ? 'active' : '' }}">
+                                    Create
+                                </a>
                             </li>
                             <li>
-                                <a href="#">Listing</a>
+                                <a href="{{ route('admin.workshop.index') }}"
+                                   class="{{ request()->routeIs('admin.workshop.index') ? 'active' : '' }}">
+                                    Listing
+                                </a>
                             </li>
                         </ul>
                     </div>
                 </li>
+
+                <!-- Trees -->
                 <li>
                     <a href="#trees" data-bs-toggle="collapse">
-                        <i class="mdi mdi-calendar"></i>
-                        <span> Trees </span>
+                        <i class="mdi mdi-tree"></i>
+                        <span>Trees</span>
                         <span class="menu-arrow"></span>
                     </a>
                     <div class="collapse" id="trees">
                         <ul class="nav-second-level">
-                            <li>
-                                <a href="#">Create</a>
-                            </li>
-                            <li>
-                                <a href="#">Listing</a>
-                            </li>
-                            <li>
-                                <a href="#">Photos</a>
-                            </li>
-                            <li>
-                                <a href="#">Types</a>
-                            </li>
+                            <li><a href="#">Create</a></li>
+                            <li><a href="#">Listing</a></li>
+                            <li><a href="#">Photos</a></li>
+                            <li><a href="#">Types</a></li>
                         </ul>
                     </div>
                 </li>
+
+                <!-- Contact Us Messages -->
                 <li>
                     <a href="#">
                         <i class="mdi mdi-message"></i>
-                        <span> Contact Us Messages </span>
+                        <span>Contact Us Messages</span>
                     </a>
                 </li>
+
             </ul>
         </div>
         <div class="clearfix"></div>

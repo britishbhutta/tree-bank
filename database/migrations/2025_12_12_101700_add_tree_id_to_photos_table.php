@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('photos', function (Blueprint $table) {
             $table->unsignedInteger('tree_id')->nullable()->after('id');
-
+            
             $table->foreign('tree_id')
                 ->references('id')
                 ->on('trees')

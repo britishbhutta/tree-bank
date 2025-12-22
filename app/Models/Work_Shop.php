@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Work_Shop extends Model
 {
+    protected $table = 'work_shops';
     protected $fillable = [
         'project_id',
         'user_id',
-        'photo_id',
         'name',
         'description',
-        'start_date/time',
-        'end_date/time',
+        'start_date',
+        'end_date',
         'images',
         'location',
     ];
@@ -25,10 +25,6 @@ class Work_Shop extends Model
     public function users()
         {
             return $this->belongsTo(User::class, 'user_id', 'id');
-        } 
-    public function photos()
-        {
-            return $this->belongsTo(Photo::class, 'photo_id', 'id');
         } 
     public function donations()
     {

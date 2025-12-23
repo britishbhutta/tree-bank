@@ -14,12 +14,13 @@ class Donation extends Model
         'amount',
         'fund_type',
         'flow',
+        'donation_number',
     ];
     public function users()
         {
             return $this->belongsTo(User::class, 'user_id', 'id');
         } 
-    public function work_shops()
+    public function workshop()
         {
             return $this->belongsTo(Work_Shop::class, 'ws_id', 'id');
         } 

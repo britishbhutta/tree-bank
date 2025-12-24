@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->dateTime('start_date')->nullable();
             $table->dateTime('end_date')->nullable();
-            $table->json('images')->nullable();
             $table->string('location')->nullable();
             $table->timestamps();
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade')->onUpdate('cascade');

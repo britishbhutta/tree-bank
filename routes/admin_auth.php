@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\WorkshopController;
 use App\Http\Controllers\Admin\DonationController;
+use App\Http\Controllers\Admin\TreeController;
+use App\Http\Controllers\Admin\TreeTypeController;
 use Illuminate\Support\Facades\Route;
 
 // Guest admin routes
@@ -47,6 +49,19 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('donation/{donation}/edit', [DonationController::class,'edit'])->name('donation.edit');
     Route::put('donation/{donation}', [DonationController::class,'update'])->name('donation.update');
     Route::delete('donation/{donation}', [DonationController::class,'destroy'])->name('donation.destroy');
+
+    // Tree
+    Route::get('tree/create', [TreeController::class,'create'])->name('trees.create');
+    Route::post('tree/store', [TreeController::class,'store'])->name('trees.store');
+
+    // tree type
+    Route::get('tree_types', [TreeTypeController::class, 'index'])->name('tree_types.index');
+    Route::get('tree_types/create', [TreeTypeController::class, 'create'])->name('tree_types.create');
+    Route::post('tree_types/store', [TreeTypeController::class, 'store'])->name('tree_types.store');
+    Route::get('tree_types/edit/{id}', [TreeTypeController::class, 'edit'])->name('tree_types.edit');
+    Route::post('tree_types/update/{id}', [TreeTypeController::class, 'update'])->name('tree_types.update');
+    Route::get('tree_types/delete/{id}', [TreeTypeController::class, 'destroy'])->name('tree_types.delete');
+    Route::get('/trees/available', [TreeTypeController::class, 'availableTrees']);
 
     Route::post('/logout', [AdminLoginController::class, 'destroy'])->name('logout');
 });

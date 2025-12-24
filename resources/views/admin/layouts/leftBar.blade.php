@@ -95,7 +95,7 @@
                     <a href="#events" data-bs-toggle="collapse"
                        class="{{ request()->routeIs('admin.workshop.*') ? '' : 'collapsed' }}">
                         <i class="mdi mdi-calendar"></i>
-                        <span>Events</span>
+                        <span>Workshop</span>
                         <span class="menu-arrow"></span>
                     </a>
                     <div class="collapse {{ request()->routeIs('admin.workshop.*') ? 'show' : '' }}" id="events">
@@ -125,13 +125,38 @@
                     </a>
                     <div class="collapse" id="trees">
                         <ul class="nav-second-level">
-                            <li><a href="#">Create</a></li>
+                            <li><a href="{{ route('admin.trees.create') }}">Create</a></li>
                             <li><a href="#">Listing</a></li>
                             <li><a href="#">Photos</a></li>
-                            <li><a href="#">Types</a></li>
                         </ul>
                     </div>
                 </li>
+
+                <li class="{{ request()->routeIs('admin.tree_types.*') ? 'menuitem-active' : '' }}">
+    <a href="#treeTypes" data-bs-toggle="collapse"
+       class="{{ request()->routeIs('admin.tree_types.*') ? '' : 'collapsed' }}">
+        <i class="mdi mdi-calendar"></i>
+        <span>Tree Type</span>
+        <span class="menu-arrow"></span>
+    </a>
+    <div class="collapse {{ request()->routeIs('admin.tree_types.*') ? 'show' : '' }}" id="treeTypes">
+        <ul class="nav-second-level">
+            <li>
+                <a href="{{ route('admin.tree_types.create') }}"
+                   class="{{ request()->routeIs('admin.tree_types.create') ? 'active' : '' }}">
+                    Create
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.tree_types.index') }}"
+                   class="{{ request()->routeIs('admin.tree_types.index') ? 'active' : '' }}">
+                    Listing
+                </a>
+            </li>
+        </ul>
+    </div>
+</li>
+
 
                 <!-- Contact Us Messages -->
                 <li>

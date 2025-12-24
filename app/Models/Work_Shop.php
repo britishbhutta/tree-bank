@@ -14,7 +14,6 @@ class Work_Shop extends Model
         'description',
         'start_date',
         'end_date',
-        'images',
         'location',
     ];
 
@@ -29,5 +28,9 @@ class Work_Shop extends Model
     public function donations()
     {
         return $this->hasMany(Donation::class, 'ws_id','id');
+    }
+    public function photos()
+    {
+        return $this->hasMany(Photo::class, 'ws_id','id');
     }
 }

@@ -37,6 +37,7 @@ class WorkshopController extends Controller
             'location'    => 'required|string|max:255',
             'images.*'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
+        // dd($request->all());die;
 
         $imagePaths = [];
         if ($request->hasFile('images')) {

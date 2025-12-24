@@ -52,4 +52,9 @@ class Tree extends Model
     {
         return $this->hasMany(Photo::class, 'tree_id','id');
     }     
+
+    public function type()
+    {
+        return $this->belongsTo(TreeType::class, 'type_id');
+    }
 }

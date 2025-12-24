@@ -8,6 +8,7 @@ class Photo extends Model
 {
     protected $fillable = [
         'tree_id',
+        'ws_id',
         'taken_date',
         'description',
     ];
@@ -17,6 +18,6 @@ class Photo extends Model
         }
     public function work_shop()
     {
-        return $this->hasMany(Work_Shop::class, 'photo_id','id');
+        return $this->belongsTo(Work_Shop::class, 'ws_id','id');
     }
 }

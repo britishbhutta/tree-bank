@@ -34,91 +34,6 @@ class DonationController extends Controller
         return view('admin.donation.create', compact('users', 'projects', 'workshops', 'treetype', 'donationNumber'));
     }
 
-//     public function store(Request $request)
-// {
-//     $rules = [
-//         'user_id' => 'required|exists:users,id',
-//         'project_id' => 'required|exists:projects,id',
-//         'ws_id' => 'required|exists:work_shops,id',
-//         'type' => 'required|in:Trees,Funds',
-//         'flow' => 'required|in:In,Out',
-//         'amount' => 'required|integer|min:1',
-//     ];
-
-//     if ($request->type === 'Funds') {
-//         $rules['fund_type'] = 'required|in:Cash,Cheque';
-//     }
-
-//     if ($request->type === 'Trees') {
-//         // Prevent empty trees array
-//         if (!isset($request->trees['type_id']) || !count($request->trees['type_id'])) {
-//             return back()
-//                 ->withErrors('Please select at least 1 tree type.')
-//                 ->withInput();
-//         }
-
-//         $rules['trees.type_id.*'] = 'required|exists:tree_types,id';
-//         $rules['trees.qty.*'] = 'required|integer|min:1';
-//     }
-
-//     $validated = $request->validate($rules);
-
-//     // Check workshop-project consistency
-//     $workshop = Work_Shop::findOrFail($request->ws_id);
-//     if ((int)$workshop->project_id !== (int)$request->project_id) {
-//         return back()
-//             ->withErrors('Selected workshop does not belong to selected project')
-//             ->withInput();
-//     }
-
-//     // For Trees, ensure total qty equals amount
-//     if ($request->type === 'Trees') {
-//         $totalTrees = array_sum($request->trees['qty']);
-//         if ($totalTrees != $request->amount) {
-//             return back()
-//                 ->withErrors('Total tree quantity must equal the amount')
-//                 ->withInput();
-//         }
-//     }
-
-//     DB::beginTransaction();
-//     try {
-//         $donation = Donation::create([
-//             'user_id' => $validated['user_id'],
-//             'ws_id' => $validated['ws_id'],
-//             'type' => $validated['type'],
-//             'amount' => $validated['amount'],
-//             'fund_type' => $request->type === 'Funds' ? $validated['fund_type'] : null,
-//             'flow' => $validated['flow'],
-//             'donation_number' => 'TB-' . str_pad(Donation::max('id') + 1, 3, '0', STR_PAD_LEFT),
-//         ]);
-
-//         if ($request->type === 'Trees') {
-//             $typeIds = $request->trees['type_id'] ?? [];
-//             $qtys    = $request->trees['qty'] ?? [];
-
-//             foreach ($typeIds as $index => $typeId) {
-//                 $qty = $qtys[$index] ?? 0;
-//                 if ($qty <= 0) continue; // Skip invalid qty
-
-//                 for ($i = 0; $i < $qty; $i++) {
-//                     Tree::create([
-//                         'donation_id' => $donation->id,
-//                         'type_id' => $typeId,
-//                         'project_id' => $request->project_id,
-//                     ]);
-//                 }
-//             }
-//         }
-
-//         DB::commit();
-//         return redirect()->route('admin.donation.create')->with('success', 'Donation created successfully');
-//     } catch (\Exception $e) {
-//         DB::rollBack();
-//         return back()->withErrors('Something went wrong, please try again')->withInput();
-//     }
-// }
-
 public function store(Request $request)
 {
     $rules = [
@@ -229,24 +144,27 @@ public function store(Request $request)
 
                 }
                 // FLOW = OUT
-                else {
+               else {
 
-                    $trees = Tree::where('project_id', $validated['project_id'])
-                        ->where('type_id', $typeId)
-                        ->whereNull('donation_id_out')
-                        ->limit($qty)
-                        ->get();
+    $trees = Tree::where('project_id', $validated['project_id'])
+        ->where('type_id', $typeId)
+        ->whereNull('donation_id_out')
+        ->orderBy('id')
+        ->limit($qty)
+        ->get();
 
-                    if ($trees->count() < $qty) {
-                        throw new \Exception('Not enough trees available for OUT donation');
-                    }
+    if ($trees->count() < $qty) {
+        throw new \Exception('Not enough trees available for OUT donation');
+    }
 
-                    foreach ($trees as $tree) {
-                        $tree->update([
-                            'donation_id_out' => $donation->id,
-                        ]);
-                    }
-                }
+    foreach ($trees as $tree) {
+        $tree->update([
+            'donation_id_out' => $donation->id,
+            'donation_id'     => $tree->donation_id,
+        ]);
+    }
+}
+
             }
         }
 
@@ -266,7 +184,7 @@ public function store(Request $request)
     }
 }
 
-
+// Edit Donation
 public function edit(Donation $donation)
 {
     $users     = User::select('id','name')->get();
@@ -274,18 +192,43 @@ public function edit(Donation $donation)
     $workshops = Work_Shop::select('id','name','project_id')->get();
     $treetype  = TreeType::all();
 
-    $trees = Tree::where('donation_id', $donation->id)
-        ->get()
-        ->groupBy('type_id')
-        ->map(function($group){
-            return [
-                'type_id' => $group[0]->type_id,
-                'qty'     => $group->count(),
-            ];
-        });
+    // Determine selected project
+    if($donation->ws_id){
+        $selectedProjectId = $donation->workshop->project_id ?? null;
+    } elseif($donation->type=='Trees'){
+        $tree = Tree::where(function($q) use($donation){
+            if($donation->flow=='Out'){
+                $q->where('donation_id_out', $donation->id);
+            } else {
+                $q->where('donation_id', $donation->id);
+            }
+        })->first();
+        $selectedProjectId = $tree->project_id ?? null;
+    } else {
+        $selectedProjectId = null;
+    }
+
+    // Existing trees for this donation
+    $trees = Tree::where(function($q) use($donation){
+        if($donation->flow === 'Out'){
+            $q->where('donation_id_out', $donation->id);
+        } else {
+            $q->where('donation_id', $donation->id);
+        }
+    })
+    ->get()
+    ->groupBy('type_id')
+    ->map(function($group){
+        return [
+            'type_id' => $group[0]->type_id,
+            'qty'     => $group->count(),
+        ];
+    })
+    ->values()
+    ->toArray();
 
     return view('admin.donation.edit', compact(
-        'donation','users','projects','workshops','treetype','trees'
+        'donation','users','projects','workshops','treetype','trees','selectedProjectId'
     ));
 }
 
@@ -296,52 +239,88 @@ public function update(Request $request, Donation $donation)
         'user_id'    => 'required|exists:users,id',
         'project_id' => 'required|exists:projects,id',
         'ws_id'      => 'nullable|exists:work_shops,id',
-        'type'       => 'required',
-        'flow'       => 'required',
-        'amount'     => 'required|numeric|min:1',
-
+        'type'       => 'required|in:Trees,Funds',
+        'flow'       => 'required|in:In,Out',
+        'amount'     => 'required|integer|min:1',
+        'fund_type'  => 'required_if:type,Funds|in:Cash,Cheque',
         'trees.type_id.*' => 'required_if:type,Trees|exists:tree_types,id',
-        'trees.qty.*'     => 'required_if:type,Trees|numeric|min:1',
+        'trees.qty.*'     => 'required_if:type,Trees|integer|min:1',
     ]);
 
-    $donation->update([
-        'user_id'    => $request->user_id,
-        'project_id' => $request->project_id,
-        'ws_id'      => $request->ws_id,
-        'type'       => $request->type,
-        'fund_type'  => $request->fund_type,
-        'flow'       => $request->flow,
-        'amount'     => $request->amount,
-    ]);
+    DB::beginTransaction();
 
-    if ($request->type === 'Trees') {
-        Tree::where('donation_id', $donation->id)
-            ->where('project_id', $request->project_id)
-            ->delete();
+    try {
+        // Update donation
+        $donation->update([
+            'user_id'    => $request->user_id,
+            'project_id' => $request->project_id,
+            'ws_id'      => $request->ws_id,
+            'type'       => $request->type,
+            'flow'       => $request->flow,
+            'amount'     => $request->amount,
+            'fund_type'  => $request->type === 'Funds' ? $request->fund_type : null,
+        ]);
 
-        $typeIds = array_values($request->trees['type_id'] ?? []);
-        $qtys    = array_values($request->trees['qty'] ?? []);
-
-        foreach ($typeIds as $i => $typeId) {
-            $qty = isset($qtys[$i]) ? (int)$qtys[$i] : 0;
-            if ($qty <= 0) continue;
-
-            for ($j = 0; $j < $qty; $j++) {
-                Tree::create([
-                    'donation_id' => $donation->id,
-                    'type_id'     => $typeId,
-                    'project_id'  => $request->project_id,
-                ]);
+        // Trees Logic
+        if($request->type === 'Trees'){
+            // Remove existing trees for this donation
+            if($request->flow === 'In'){
+                Tree::where('donation_id', $donation->id)->delete();
+            } else {
+                Tree::where('donation_id_out', $donation->id)->update(['donation_id_out'=>null]);
             }
+
+            $typeIds = $request->trees['type_id'] ?? [];
+            $qtys    = $request->trees['qty'] ?? [];
+
+            foreach($typeIds as $i => $typeId){
+                $qty = (int) ($qtys[$i] ?? 0);
+                if($qty <= 0) continue;
+
+                if($request->flow === 'In'){
+                    for($j=0;$j<$qty;$j++){
+                        Tree::create([
+                            'donation_id' => $donation->id,
+                            'type_id'     => $typeId,
+                            'project_id'  => $request->project_id,
+                        ]);
+                    }
+                } else {
+                    $trees = Tree::where('project_id', $request->project_id)
+                        ->where('type_id', $typeId)
+                        ->where(function($q) use($donation){
+                            $q->whereNull('donation_id_out')
+                              ->orWhere('donation_id_out', $donation->id);
+                        })
+                        ->limit($qty)
+                        ->get();
+
+                    if($trees->count() < $qty){
+                        throw new \Exception('Not enough trees available for Out donation');
+                    }
+
+                    foreach($trees as $tree){
+                        $tree->update(['donation_id_out' => $donation->id]);
+                    }
+                }
+            }
+        } else {
+            // Remove all trees if type != Trees
+            Tree::where('donation_id', $donation->id)
+                ->orWhere('donation_id_out', $donation->id)
+                ->delete();
         }
 
-    } else {
-        Tree::where('donation_id', $donation->id)->delete();
-    }
+        DB::commit();
+        return redirect()->route('admin.donation.index')->with('success','Donation updated successfully');
 
-    return redirect()->route('admin.donation.index')
-        ->with('success','Donation updated successfully');
+    } catch(\Exception $e){
+        DB::rollBack();
+        return back()->withErrors($e->getMessage())->withInput();
+    }
 }
+
+
 
     public function destroy(Donation $donation)
     {

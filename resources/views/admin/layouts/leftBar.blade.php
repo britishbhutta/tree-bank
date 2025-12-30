@@ -126,7 +126,7 @@
                     <div class="collapse" id="trees">
                         <ul class="nav-second-level">
                             <li><a href="{{ route('admin.trees.create') }}">Create</a></li>
-                            <li><a href="#">Listing</a></li>
+                            <li><a href="{{ route('admin.trees.index') }}">Listing</a></li>
                             <li><a href="#">Photos</a></li>
                         </ul>
                     </div>

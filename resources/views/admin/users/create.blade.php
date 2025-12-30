@@ -66,6 +66,8 @@
                                             <option value="">Select Role</option>
                                             <option value="1">User</option>
                                             <option value="2">Company</option>
+                                            <option value="3">Gardener</option>
+                                            <option value="4">Caretaker</option>
                                         </select>
                                     </div>
 

@@ -10,18 +10,15 @@ use Illuminate\Http\Request;
 
 class TreeTypeController extends Controller
 {
-    // List all tree types
     public function index() {
         $treeTypes = TreeType::all();
         return view('admin.tree_types.index', compact('treeTypes'));
     }
 
-    // Show create form
     public function create() {
         return view('admin.tree_types.create');
     }
 
-    // Store new tree type
     public function store(Request $request) {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -36,13 +33,11 @@ class TreeTypeController extends Controller
         return redirect()->route('admin.tree_types.index')->with('success', 'Tree type added successfully.');
     }
 
-    // Show edit form
     public function edit($id) {
         $treeType = TreeType::findOrFail($id);
         return view('admin.tree_types.edit', compact('treeType'));
     }
 
-    // Update tree type
     public function update(Request $request, $id) {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -57,7 +52,6 @@ class TreeTypeController extends Controller
         return redirect()->route('admin.tree_types.index')->with('success', 'Tree type updated successfully.');
     }
 
-    // Delete tree type
     public function destroy($id) {
         $treeType = TreeType::findOrFail($id);
         $treeType->delete();

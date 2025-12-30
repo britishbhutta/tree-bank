@@ -51,8 +51,12 @@
                                         <td>
                                             @if($user->role == 2)
                                                 <span class="badge bg-info">Company</span>
+                                            @elseif($user->role == 3)
+                                                <span class="badge bg-success">Gardener</span>
+                                            @elseif($user->role == 4)
+                                                <span class="badge bg-secondary">Caretaker</span>
                                             @else
-                                                <span class="badge bg-secondary">User</span>
+                                                <span class="badge bg-primary">User</span>
                                             @endif
                                         </td>
 

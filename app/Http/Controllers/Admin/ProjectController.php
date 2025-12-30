@@ -40,11 +40,6 @@ class ProjectController extends Controller
             ->with('success', 'Project created successfully');
     }
 
-    // public function show(Project $project)
-    // {
-    //     return view('admin.projects.show', compact('project'));
-    // }
-
     public function edit(Project $project)
     {
         return view('admin.projects.edit', compact('project'));

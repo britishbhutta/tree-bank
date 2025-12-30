@@ -42,6 +42,15 @@ Route::middleware('auth:admin')->group(function () {
     Route::put('workshop/{workshop}', [WorkshopController::class, 'update'])->name('workshop.update');
     Route::delete('workshop/{workshop}', [WorkshopController::class, 'destroy'])->name('workshop.destroy');
 
+    // tree type
+    Route::get('tree_types', [TreeTypeController::class, 'index'])->name('tree_types.index');
+    Route::get('tree_types/create', [TreeTypeController::class, 'create'])->name('tree_types.create');
+    Route::post('tree_types/store', [TreeTypeController::class, 'store'])->name('tree_types.store');
+    Route::get('tree_types/edit/{id}', [TreeTypeController::class, 'edit'])->name('tree_types.edit');
+    Route::post('tree_types/update/{id}', [TreeTypeController::class, 'update'])->name('tree_types.update');
+    Route::get('tree_types/delete/{id}', [TreeTypeController::class, 'destroy'])->name('tree_types.delete');
+    Route::get('/trees/available', [TreeTypeController::class, 'availableTrees']);
+
     // Donation
     Route::get('donation', [DonationController::class,'index'])->name('donation.index');
     Route::get('donation/create', [DonationController::class,'create'])->name('donation.create');
@@ -53,15 +62,9 @@ Route::middleware('auth:admin')->group(function () {
     // Tree
     Route::get('tree/create', [TreeController::class,'create'])->name('trees.create');
     Route::post('tree/store', [TreeController::class,'store'])->name('trees.store');
-
-    // tree type
-    Route::get('tree_types', [TreeTypeController::class, 'index'])->name('tree_types.index');
-    Route::get('tree_types/create', [TreeTypeController::class, 'create'])->name('tree_types.create');
-    Route::post('tree_types/store', [TreeTypeController::class, 'store'])->name('tree_types.store');
-    Route::get('tree_types/edit/{id}', [TreeTypeController::class, 'edit'])->name('tree_types.edit');
-    Route::post('tree_types/update/{id}', [TreeTypeController::class, 'update'])->name('tree_types.update');
-    Route::get('tree_types/delete/{id}', [TreeTypeController::class, 'destroy'])->name('tree_types.delete');
-    Route::get('/trees/available', [TreeTypeController::class, 'availableTrees']);
+    Route::get('/trees', [TreeController::class, 'index'])->name('trees.index');
+    Route::get('trees/{tree}', [TreeController::class, 'show'])->name('trees.show');
+    Route::put('trees/{tree}', [TreeController::class, 'update'])->name('trees.update');
 
     Route::post('/logout', [AdminLoginController::class, 'destroy'])->name('logout');
 });

@@ -20,7 +20,6 @@ class DonationController extends Controller
         return view('admin.donation.index', compact('donations'));
     }
 
-     // Show the create form
     public function create()
     {
         $users = User::select('id','name')->get();
@@ -45,12 +44,10 @@ public function store(Request $request)
         'amount'     => 'required|integer|min:1',
     ];
 
-    // Funds specific rule
     if ($request->type === 'Funds') {
         $rules['fund_type'] = 'required|in:Cash,Cheque';
     }
 
-    // Trees specific rules
     if ($request->type === 'Trees') {
         if (
             !isset($request->trees['type_id']) ||
@@ -67,10 +64,6 @@ public function store(Request $request)
 
     $validated = $request->validate($rules);
 
-    /**
-     * ✅ Workshop → Project relation check
-     * Sirf tab chale jab ws_id ho
-     */
     if (!empty($validated['ws_id'])) {
         $workshop = Work_Shop::find($validated['ws_id']);
 
@@ -84,9 +77,6 @@ public function store(Request $request)
         }
     }
 
-    /**
-     * ✅ Trees quantity validation
-     */
     if ($validated['type'] === 'Trees') {
         $totalTrees = array_sum($request->trees['qty']);
 
@@ -100,9 +90,6 @@ public function store(Request $request)
     DB::beginTransaction();
 
     try {
-        /**
-         * ✅ Donation Create
-         */
         $donation = Donation::create([
             'user_id'         => $validated['user_id'],
             'project_id'      => $validated['project_id'],
@@ -121,9 +108,6 @@ public function store(Request $request)
             ),
         ]);
 
-        /**
-         * ✅ Trees Logic
-         */
         if ($validated['type'] === 'Trees') {
 
             foreach ($request->trees['type_id'] as $index => $typeId) {
@@ -131,7 +115,6 @@ public function store(Request $request)
                 $qty = $request->trees['qty'][$index] ?? 0;
                 if ($qty <= 0) continue;
 
-                // FLOW = IN
                 if ($validated['flow'] === 'In') {
 
                     for ($i = 0; $i < $qty; $i++) {
@@ -143,7 +126,6 @@ public function store(Request $request)
                     }
 
                 }
-                // FLOW = OUT
                else {
 
     $trees = Tree::where('project_id', $validated['project_id'])
@@ -184,7 +166,6 @@ public function store(Request $request)
     }
 }
 
-// Edit Donation
 public function edit(Donation $donation)
 {
     $users     = User::select('id','name')->get();
@@ -192,7 +173,6 @@ public function edit(Donation $donation)
     $workshops = Work_Shop::select('id','name','project_id')->get();
     $treetype  = TreeType::all();
 
-    // Determine selected project
     if($donation->ws_id){
         $selectedProjectId = $donation->workshop->project_id ?? null;
     } elseif($donation->type=='Trees'){
@@ -208,7 +188,6 @@ public function edit(Donation $donation)
         $selectedProjectId = null;
     }
 
-    // Existing trees for this donation
     $trees = Tree::where(function($q) use($donation){
         if($donation->flow === 'Out'){
             $q->where('donation_id_out', $donation->id);
@@ -250,7 +229,6 @@ public function update(Request $request, Donation $donation)
     DB::beginTransaction();
 
     try {
-        // Update donation
         $donation->update([
             'user_id'    => $request->user_id,
             'project_id' => $request->project_id,
@@ -261,9 +239,7 @@ public function update(Request $request, Donation $donation)
             'fund_type'  => $request->type === 'Funds' ? $request->fund_type : null,
         ]);
 
-        // Trees Logic
         if($request->type === 'Trees'){
-            // Remove existing trees for this donation
             if($request->flow === 'In'){
                 Tree::where('donation_id', $donation->id)->delete();
             } else {
@@ -305,7 +281,6 @@ public function update(Request $request, Donation $donation)
                 }
             }
         } else {
-            // Remove all trees if type != Trees
             Tree::where('donation_id', $donation->id)
                 ->orWhere('donation_id_out', $donation->id)
                 ->delete();
@@ -319,8 +294,6 @@ public function update(Request $request, Donation $donation)
         return back()->withErrors($e->getMessage())->withInput();
     }
 }
-
-
 
     public function destroy(Donation $donation)
     {

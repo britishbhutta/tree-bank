@@ -29,11 +29,21 @@
                                 <tbody>
                                     <tr>
                                         <th>Donated By</th>
-                                        <td>{{ $tree->donations->users->name ?? 'N/A' }}</td>
+                                        <td>{{ $tree->donations->first()->users->name ?? 'N/A' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Donation In #</th>
+                                        <td>{{ optional($tree->donations)->donation_number ?? 'N/A' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Donated To</th>
-                                        <td>{{ $tree->donationsOut->users->name ?? 'N/A' }}</td>
+                                        <td>
+                                            {{ optional($tree->donations->first())->users->name ?? 'N/A' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Donation Out #</th>
+                                        <td>{{ optional($tree->donationsOut)->donation_number ?? 'N/A' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Tree Type</th>
@@ -54,15 +64,39 @@
                                     </tr>
                                     <tr>
                                         <th>Planted By</th>
-                                        <td>{{ $tree->plantedBy->name ?? 'N/A' }}</td>
+                                        <td>
+                                            <span class="editable-select" data-field="user_id">
+                                                {{ $tree->plantedBy->name ?? 'N/A' }}
+                                            </span>
+                                            <select class="form-control d-none">
+                                                <option value="">Select Gardener</option>
+                                                @foreach($gardner as $g)
+                                                    <option value="{{ $g->id }}" {{ isset($tree->plantedBy) && $tree->plantedBy->id == $g->id ? 'selected' : '' }}>
+                                                        {{ $g->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>Caretaker</th>
-                                        <td>{{ $tree->CareTakenBy->name ?? 'N/A' }}</td>
+                                        <td>
+                                            <span class="editable-select" data-field="user_id_ct">
+                                                {{ $tree->CareTakenBy->name ?? 'N/A' }}
+                                            </span>
+                                            <select class="form-control d-none">
+                                                <option value="">Select Caretaker</option>
+                                                @foreach($caretaker as $c)
+                                                    <option value="{{ $c->id }}" {{ isset($tree->CareTakenBy) && $tree->CareTakenBy->id == $c->id ? 'selected' : '' }}>
+                                                        {{ $c->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>Project</th>
-                                        <td>{{ $tree->projects->name ?? 'N/A' }}</td>
+                                        <td>{{ $tree->projects->first()->name ?? 'N/A' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Tree Age</th>
@@ -126,6 +160,13 @@
                                             <input type="text" class="form-control d-none" value="{{ $tree->purpose ?? '' }}">
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <th>Visit(Requried)</th>
+                                        <td>
+                                            <span class="editable" data-field="visit_req">{{ $tree->visit_req ?? 'N/A' }}</span>
+                                            <input type="number" class="form-control d-none" value="{{ $tree->visit_req ?? '' }}">
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -176,6 +217,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Editable text fields
     document.querySelectorAll('.editable').forEach(span => {
         span.addEventListener('click', function() {
             const input = this.nextElementSibling;
@@ -215,6 +257,45 @@ document.addEventListener('DOMContentLoaded', function() {
         input.addEventListener('blur', saveField);
         input.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') saveField();
+        });
+    });
+
+    // Editable select fields (Planted By / Caretaker)
+    document.querySelectorAll('.editable-select').forEach(span => {
+        span.addEventListener('click', function() {
+            const select = this.nextElementSibling;
+            this.classList.add('d-none');
+            select.classList.remove('d-none');
+            select.focus();
+        });
+
+        const select = span.nextElementSibling;
+
+        select.addEventListener('change', function() {
+            const value = this.value;
+            const field = span.dataset.field;
+
+            fetch('/admin/trees/{{ $tree->id }}', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ [field]: value })
+            })
+            .then(res => res.json())
+            .then(data => {
+                const selectedText = this.options[this.selectedIndex].text;
+                span.textContent = selectedText;
+                const alert = document.getElementById('alert-success');
+                alert.textContent = data.message || 'Tree details updated successfully!';
+                alert.classList.remove('d-none');
+                setTimeout(() => alert.classList.add('d-none'), 2000);
+            });
+
+            this.classList.add('d-none');
+            span.classList.remove('d-none');
         });
     });
 });

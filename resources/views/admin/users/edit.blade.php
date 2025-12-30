@@ -39,40 +39,41 @@
                                 @csrf
                                 @method('PUT')
 
-                                {{-- BASIC --}}
+                                {{-- BASIC INFO --}}
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Full Name</label>
                                         <input type="text" name="name" class="form-control"
-                                               value="{{ old('name', $user->name) }}">
+                                               value="{{ old('name', $user->name) }}" required>
                                     </div>
 
                                     <div class="col-md-6">
                                         <label class="form-label">Role</label>
-                                        <select name="role" id="role" class="form-select" disabled>
+                                        {{-- Hidden input to safely send role even if readonly --}}
+                                        <input type="hidden" name="role" id="role_hidden" value="{{ old('role', $user->role) }}">
+                                        <select id="role" class="form-select">
                                             <option value="1" {{ $user->role == 1 ? 'selected' : '' }}>User</option>
                                             <option value="2" {{ $user->role == 2 ? 'selected' : '' }}>Company</option>
+                                            <option value="3" {{ $user->role == 3 ? 'selected' : '' }}>Gardener</option>
+                                            <option value="4" {{ $user->role == 4 ? 'selected' : '' }}>Caretaker</option>
                                         </select>
                                     </div>
                                 </div>
 
-                                {{-- PERSONAL --}}
+                                {{-- PERSONAL FIELDS --}}
                                 <div id="personal_fields" class="border rounded p-3 mb-3">
                                     <h6 class="mb-3 text-muted">Personal Information</h6>
-
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label class="form-label">Email</label>
                                             <input type="email" name="email" class="form-control"
                                                    value="{{ old('email', $user->email) }}">
                                         </div>
-
                                         <div class="col-md-6">
                                             <label class="form-label">Phone</label>
                                             <input type="text" name="phone" class="form-control"
                                                    value="{{ old('phone', $user->phone) }}">
                                         </div>
-
                                         <div class="col-md-12">
                                             <label class="form-label">Address</label>
                                             <input type="text" name="address" class="form-control"
@@ -81,23 +82,20 @@
                                     </div>
                                 </div>
 
-                                {{-- COMPANY --}}
+                                {{-- COMPANY FIELDS --}}
                                 <div id="company_fields" class="border rounded p-3 mb-3">
                                     <h6 class="mb-3 text-muted">Company Information</h6>
-
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label class="form-label">Company Email</label>
                                             <input type="email" name="company_email" class="form-control"
                                                    value="{{ old('company_email', $user->company_email) }}">
                                         </div>
-
                                         <div class="col-md-6">
                                             <label class="form-label">Company Phone</label>
                                             <input type="text" name="company_phone" class="form-control"
                                                    value="{{ old('company_phone', $user->company_phone) }}">
                                         </div>
-
                                         <div class="col-md-12">
                                             <label class="form-label">Company Address</label>
                                             <input type="text" name="company_address" class="form-control"
@@ -107,7 +105,7 @@
                                 </div>
 
                                 <div class="text-end">
-                                    <button class="btn btn-primary">Update User</button>
+                                    <button class="btn btn-primary">Update</button>
                                     <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
                                         Back
                                     </a>
@@ -127,12 +125,15 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const role = document.getElementById('role');
+    const roleSelect = document.getElementById('role');
+    const roleHidden = document.getElementById('role_hidden');
     const personal = document.getElementById('personal_fields');
     const company = document.getElementById('company_fields');
 
-    function toggle() {
-        if (role.value === '2') {
+    function toggleFields() {
+        const role = roleSelect.value;
+        roleHidden.value = role; // always submit role
+        if (role === '2') {
             company.style.display = 'block';
             personal.style.display = 'none';
         } else {
@@ -141,8 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    toggle();
-    role.addEventListener('change', toggle);
+    toggleFields();
+    roleSelect.addEventListener('change', toggleFields);
 });
 </script>
 @endsection

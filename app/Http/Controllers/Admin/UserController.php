@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\User;
  use App\Mail\AccountCreatedMail;
 use Illuminate\Support\Facades\Mail;
@@ -22,7 +23,7 @@ public function store(Request $request)
     $rules = [
         'name' => 'required|string|max:255',
         'password' => 'required|min:6',
-        'role' => 'required|in:1,2',
+        'role' => 'required|in:1,2,3,4',
     ];
 
     if ($request->role == 2) {
@@ -90,26 +91,35 @@ public function edit(User $user)
 
 public function update(Request $request, User $user)
 {
+    // dd($request->all());die;
     $rules = [
         'name' => 'required|string|max:255',
-        'role' => 'required|in:1,2',
+        'role' => 'required|in:1,2,3,4',
     ];
 
     if ($request->role == 2) {
         $rules += [
-            'company_email' => 'required|email|unique:users,company_email,' . $user->id,
+            'company_email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'company_email')->ignore($user->id),
+            ],
             'company_phone' => 'required',
             'company_address' => 'required',
         ];
     } else {
         $rules += [
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
             'phone' => 'required',
             'address' => 'required',
         ];
     }
 
-    $validated = $request->validate($rules);
+    $request->validate($rules);
 
     $data = [
         'name' => $request->name,
@@ -121,25 +131,74 @@ public function update(Request $request, User $user)
             'company_email' => $request->company_email,
             'company_phone' => $request->company_phone,
             'company_address' => $request->company_address,
-            'email' => null,
-            'phone' => null,
-            'address' => null,
         ];
     } else {
         $data += [
             'email' => $request->email,
             'phone' => $request->phone,
             'address' => $request->address,
-            'company_email' => null,
-            'company_phone' => null,
-            'company_address' => null,
         ];
     }
 
     $user->update($data);
 
-    return redirect()->route('admin.users.index')->with('success', 'User updated successfully');
+    return redirect()
+        ->route('admin.users.index')
+        ->with('success', 'User updated successfully');
 }
+
+// public function update(Request $request, User $user)
+// {
+//     $rules = [
+//         'name' => 'required|string|max:255',
+//         'role' => 'required|in:1,2,3,4',
+//     ];
+
+//     if ($request->role == 2) {
+//         $rules += [
+//             'company_email' => 'required|email|unique:users,company_email,' . $user->id,
+//             'company_phone' => 'required',
+//             'company_address' => 'required',
+//         ];
+//     } else {
+//         $rules += [
+//             'email' => 'required|email|unique:users,email,' . $user->id,
+//             'phone' => 'required',
+//             'address' => 'required',
+//         ];
+//     }
+
+//     $validated = $request->validate($rules);
+
+//     $data = [
+//         'name' => $request->name,
+//         'role' => $request->role,
+//     ];
+
+//     if ($request->role == 2) {
+//         $data += [
+//             'company_email' => $request->company_email,
+//             'company_phone' => $request->company_phone,
+//             'company_address' => $request->company_address,
+//             'email' => null,
+//             'phone' => null,
+//             'address' => null,
+//         ];
+//     } else {
+//         $data += [
+//             'email' => $request->email,
+//             'phone' => $request->phone,
+//             'address' => $request->address,
+//             'company_email' => null,
+//             'company_phone' => null,
+//             'company_address' => null,
+//         ];
+//     }
+
+//     $user->update($data);
+
+//     return redirect()->route('admin.users.index')->with('success', 'User updated successfully');
+// }
 
 public function destroy(User $user)
 {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\Tree;
+use App\Models\User;
 use App\Models\Donation;
 
 
@@ -45,8 +46,7 @@ public function create()
     return view('admin.trees.index', compact('trees','projects'));
 }
 
-
-   public function show(Tree $tree)
+public function show(Tree $tree)
 {
     $tree->load([
         'donations.users',   
@@ -56,31 +56,39 @@ public function create()
         'CareTakenBy',
         'projects'
     ]);
-    
-    return view('admin.trees.show', compact('tree'));
+
+    $gardner = User::where('role', 3)->get();
+    $caretaker = User::where('role', 4)->get();
+
+    return view('admin.trees.show', compact('tree', 'gardner', 'caretaker'));
 }
-
-
-   public function update(Request $request, Tree $tree)
+public function update(Request $request, Tree $tree)
 {
-    $fields = $request->only([
-        'tree_type','planting_status','location','planted_date','last_visited_date',
-        'notes','purpose','age','bought_date'
-    ]);
+    $data = $request->all();
 
-    $tree->update($fields);
-
-    if($request->expectsJson()){
-        return response()->json([
-            'success' => true,
-            'message' => 'Tree details updated successfully!'
-        ]);
+    if(isset($data['user_id'])) {
+    $tree->user_id = $data['user_id'] ?: null;
     }
 
-    return redirect()->route('admin.trees.show', $tree->id)
-                     ->with('success','Tree details updated successfully!');
-}
+    if(isset($data['user_id_ct'])) {
+        $tree->user_id_ct = $data['user_id_ct'] ?: null;
+    }
 
+    $fields = ['tree_type', 'planting_status', 'age', 'bought_date', 'location', 'planted_date', 'last_visited_date', 'notes', 'purpose','visit_req'];
+
+    foreach($fields as $field) {
+        if(isset($data[$field])) {
+            $tree->$field = $data[$field];
+        }
+    }
+
+    $tree->save();
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Tree details updated successfully!'
+    ]);
+}
 
 
 }

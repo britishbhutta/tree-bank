@@ -15,6 +15,7 @@
         <link href="{{asset('admin/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style"/>
         <link href="{{asset('admin/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
         <script src="{{asset('admin/assets/js/head.js') }}"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         @stack('styles')
     </head>
     <body data-layout-mode="default" data-theme="light" data-topbar-color="dark" data-menu-position="fixed" data-leftbar-color="light" data-leftbar-size='default' data-sidebar-user='false'>

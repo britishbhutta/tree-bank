@@ -8,7 +8,31 @@ use App\Http\Controllers\Admin\WorkshopController;
 use App\Http\Controllers\Admin\DonationController;
 use App\Http\Controllers\Admin\TreeController;
 use App\Http\Controllers\Admin\TreeTypeController;
+use App\Http\Controllers\Admin\CurrencyController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/update-currency-rates', [CurrencyController::class, 'updateCurrencyRates'])->name('cronjob');
+
+Route::get('/create-storage-link', function () {
+    $target = storage_path('app/public');
+    $link = public_path('storage');
+
+    if (file_exists($link)) {
+        return 'Storage link already exists.';
+    }
+
+    if (symlink($target, $link)) {
+        return 'Storage link created successfully.';
+    } else {
+        return 'Failed to create storage link. Your server may not support symlinks.';
+    }
+});
+Route::get('/clear-cache', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('config:cache');
+    return 'Application cache and config cache cleared successfully.';
+});
 
 // Guest admin routes
 Route::middleware('guest:admin')->group(function () {
@@ -65,6 +89,14 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/trees', [TreeController::class, 'index'])->name('trees.index');
     Route::get('trees/{tree}', [TreeController::class, 'show'])->name('trees.show');
     Route::put('trees/{tree}', [TreeController::class, 'update'])->name('trees.update');
+
+    //Currencies
+    Route::get('currencies',[CurrencyController::class, 'index'])->name('currencies');
+    Route::get('createCurrency',[CurrencyController::class, 'create'])->name('createCurrency');
+    Route::post('storeCurrency', [CurrencyController::class, 'store'])->name('storeCurrency');   
+    Route::get('editCurrency/{id}', [CurrencyController::class, 'edit'])->name('editCurrency');
+    Route::put('updateCurrency/{id}', [CurrencyController::class, 'update'])->name('updateCurrency');
+    Route::get('deleteCurrency/{id}', [CurrencyController::class, 'delete'])->name('deleteCurrency');
 
     Route::post('/logout', [AdminLoginController::class, 'destroy'])->name('logout');
 });

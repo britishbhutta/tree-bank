@@ -450,6 +450,9 @@
 <body>
     <!-- Navigation -->
     <nav class="navbar">
+        <a href="{{ url('/react') }}">
+            <h4>React View</h4>
+        </a>
         <div class="nav-container">
             <a href="#home" class="logo" onclick="showPage('home')">
                 {{-- <i class="fas fa-tree"></i> Tree Bank --}}

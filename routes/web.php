@@ -10,3 +10,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 // Frontend homepage
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/react', [DashboardController::class, 'react'])->name('dashboard')->name('react');
+
+
+Route::view('/{any}', 'app')->where('any', '.*');

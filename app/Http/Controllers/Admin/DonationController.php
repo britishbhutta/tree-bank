@@ -22,7 +22,7 @@ class DonationController extends Controller
 
     public function create()
     {
-        $users = User::select('id','name')->get();
+        $users = User::select('id','name')->whereIn('role', [1, 2])->get();
         $projects = Project::select('id','name')->get();
         $workshops = Work_Shop::select('id','name','project_id')->get();
         $treetype = TreeType::select('id','name')->get();
@@ -168,7 +168,7 @@ public function store(Request $request)
 
 public function edit(Donation $donation)
 {
-    $users     = User::select('id','name')->get();
+    $users = User::select('id','name')->whereIn('role', [1, 2])->get();
     $projects  = Project::select('id','name')->get();
     $workshops = Work_Shop::select('id','name','project_id')->get();
     $treetype  = TreeType::all();

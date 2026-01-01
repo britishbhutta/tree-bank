@@ -37,9 +37,9 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label>User</label>
+                                <label>Donor</label>
                                 <select name="user_id" class="form-control">
-                                    <option value="">Select User</option>
+                                    <option value="">Select Donor</option>
                                     @foreach ($users as $user)
                                         <option value="{{ $user->id }}"
                                             {{ old('user_id') == $user->id ? 'selected' : '' }}>

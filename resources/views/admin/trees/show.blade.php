@@ -216,21 +216,32 @@
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Editable text fields
+document.addEventListener('DOMContentLoaded', function () {
+
     document.querySelectorAll('.editable').forEach(span => {
-        span.addEventListener('click', function() {
-            const input = this.nextElementSibling;
-            this.classList.add('d-none');
+
+        const input = span.nextElementSibling;
+        let oldValue = '';
+
+        span.addEventListener('click', function () {
+            oldValue = span.textContent.trim();
+            input.value = oldValue === 'N/A' ? '' : oldValue;
+
+            span.classList.add('d-none');
             input.classList.remove('d-none');
             input.focus();
         });
 
-        const input = span.nextElementSibling;
-
         const saveField = () => {
-            const value = input.value;
+            const newValue = input.value.trim();
             const field = span.dataset.field;
+
+            if (newValue === '' || newValue === oldValue) {
+                input.classList.add('d-none');
+                span.classList.remove('d-none');
+                span.textContent = oldValue;
+                return;
+            }
 
             fetch('/admin/trees/{{ $tree->id }}', {
                 method: 'PUT',
@@ -239,41 +250,58 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
-                body: JSON.stringify({ [field]: value })
+                body: JSON.stringify({ [field]: newValue })
             })
             .then(res => res.json())
             .then(data => {
-                span.textContent = value;
+                span.textContent = newValue;
+
                 const alert = document.getElementById('alert-success');
                 alert.textContent = data.message || 'Tree details updated successfully!';
                 alert.classList.remove('d-none');
+
                 setTimeout(() => alert.classList.add('d-none'), 2000);
             });
 
             input.classList.add('d-none');
             span.classList.remove('d-none');
-        }
+        };
 
         input.addEventListener('blur', saveField);
-        input.addEventListener('keydown', function(e) {
+
+        input.addEventListener('keydown', e => {
             if (e.key === 'Enter') saveField();
+
+            if (e.key === 'Escape') {
+                input.classList.add('d-none');
+                span.classList.remove('d-none');
+                span.textContent = oldValue;
+            }
         });
     });
 
-    // Editable select fields (Planted By / Caretaker)
     document.querySelectorAll('.editable-select').forEach(span => {
-        span.addEventListener('click', function() {
-            const select = this.nextElementSibling;
-            this.classList.add('d-none');
+
+        const select = span.nextElementSibling;
+        let oldValue = '';
+
+        span.addEventListener('click', function () {
+            oldValue = select.value;
+
+            span.classList.add('d-none');
             select.classList.remove('d-none');
             select.focus();
         });
 
-        const select = span.nextElementSibling;
-
-        select.addEventListener('change', function() {
-            const value = this.value;
+        select.addEventListener('change', function () {
+            const newValue = this.value;
             const field = span.dataset.field;
+
+            if (newValue === '' || newValue === oldValue) {
+                select.classList.add('d-none');
+                span.classList.remove('d-none');
+                return;
+            }
 
             fetch('/admin/trees/{{ $tree->id }}', {
                 method: 'PUT',
@@ -282,22 +310,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
-                body: JSON.stringify({ [field]: value })
+                body: JSON.stringify({ [field]: newValue })
             })
             .then(res => res.json())
             .then(data => {
-                const selectedText = this.options[this.selectedIndex].text;
-                span.textContent = selectedText;
+                span.textContent = this.options[this.selectedIndex].text;
+
                 const alert = document.getElementById('alert-success');
                 alert.textContent = data.message || 'Tree details updated successfully!';
                 alert.classList.remove('d-none');
+
                 setTimeout(() => alert.classList.add('d-none'), 2000);
             });
 
-            this.classList.add('d-none');
+            select.classList.add('d-none');
+            span.classList.remove('d-none');
+        });
+
+        select.addEventListener('blur', function () {
+            select.classList.add('d-none');
             span.classList.remove('d-none');
         });
     });
+
 });
 </script>
+
 @endsection

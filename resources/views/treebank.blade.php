@@ -455,7 +455,7 @@
         </a>
         <div class="nav-container">
             <a href="#home" class="logo" onclick="showPage('home')">
-                {{-- <i class="fas fa-tree"></i> Tree Bank --}}
+                <i class="fas fa-tree"></i> Tree Bank
                 <img src="{{ asset('FrontEnd\Icon\tree-bank-icon.png') }}" style="width: 90px" />
             </a>
             

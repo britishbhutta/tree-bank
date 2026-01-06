@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FrontEnd\ContactUsController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 //Admin
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -10,7 +12,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 // Frontend homepage
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/react', [DashboardController::class, 'react'])->name('dashboard')->name('react');
+Route::get('/react', [DashboardController::class, 'react'])->name('react');
+Route::post('/storeContactUs',[ContactUsController::class,'store'])->name('storeContactUs');
 
 
 Route::view('/{any}', 'app')->where('any', '.*');

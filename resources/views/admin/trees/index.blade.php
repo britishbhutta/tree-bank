@@ -20,12 +20,29 @@
                                     placeholder="Search by Tree ID">
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <select name="project_id" id="project_id" class="form-control">
                                     <option value="">-- Select Project --</option>
                                     @foreach ($projects as $project)
                                         <option value="{{ $project->id }}">
                                             {{ $project->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="death" id="death" class="form-control">
+                                    <option value="">-- Death Status --</option>
+                                    <option value="1">Dead</option>
+                                    <option value="0">Alive</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="user_id" id="user_id" class="form-control">
+                                    <option value="">-- Select Donor --</option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}">
+                                            {{ $user->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -38,8 +55,10 @@
                                     <tr>
                                         <th>Tree ID</th>
                                         <th>Tree Type</th>
+                                        <th>Tree Name</th>
                                         <th>Project</th>
                                         <th>Planted</th>
+                                        <th>Death</th>
                                         <th width="120">Action</th>
                                     </tr>
                                 </thead>
@@ -71,7 +90,9 @@
                     type: "GET",
                     data: {
                         tree_id: $('#tree_id').val(),
-                        project_id: $('#project_id').val()
+                        project_id: $('#project_id').val(),
+                        death: $('#death').val(),
+                        user_id: $('#user_id').val()
                     },
                     beforeSend: function() {
                         $('#treeTable').html(`
@@ -93,7 +114,8 @@
 
             $('#tree_id').on('keyup', fetchTrees);
             $('#project_id').on('change', fetchTrees);
-
+            $('#death').on('change', fetchTrees);
+            $('#user_id').on('change', fetchTrees);
         });
     </script>
 @endpush

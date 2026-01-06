@@ -1,13 +1,23 @@
 @extends('admin.layouts.master')
+
 @section('title')
     Dashboard
 @endsection
+
 @push('styles')
+    <style>
+        .card-label {
+            font-size: 10px;
+        }
+    </style>
 @endpush
+
 @section('content')
     <main class="content-page">
         <div class="content">
             <div class="container-fluid">
+
+                <!-- PAGE TITLE -->
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box">
@@ -15,7 +25,10 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="row">
+
+                    <!-- Donors -->
                     <div class="col-md-6 col-xl-3">
                         <div class="card">
                             <div class="card-body">
@@ -26,7 +39,8 @@
                                         </div>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <h3 class="text-dark my-1"><span data-plugin="counterup">{{ $donar_count }}</span>
+                                        <h3 class="text-dark my-1">
+                                            <span data-plugin="counterup">{{ $donar_count }}</span>
                                         </h3>
                                         <p class="text-muted mb-0 card-label">Donors</p>
                                     </div>
@@ -35,6 +49,7 @@
                         </div>
                     </div>
 
+                    <!-- Gardeners -->
                     <div class="col-md-6 col-xl-3">
                         <div class="card">
                             <div class="card-body">
@@ -45,7 +60,8 @@
                                         </div>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <h3 class="text-dark my-1"><span data-plugin="counterup">{{ $gardner_count }}</span>
+                                        <h3 class="text-dark my-1">
+                                            <span data-plugin="counterup">{{ $gardner_count }}</span>
                                         </h3>
                                         <p class="text-muted mb-0 card-label">Gardeners</p>
                                     </div>
@@ -54,6 +70,7 @@
                         </div>
                     </div>
 
+                    <!-- Caretakers -->
                     <div class="col-md-6 col-xl-3">
                         <div class="card">
                             <div class="card-body">
@@ -64,8 +81,9 @@
                                         </div>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <h3 class="text-dark my-1"><span
-                                                data-plugin="counterup">{{ $caretaker_count }}</span></h3>
+                                        <h3 class="text-dark my-1">
+                                            <span data-plugin="counterup">{{ $caretaker_count }}</span>
+                                        </h3>
                                         <p class="text-muted mb-0 card-label">Caretakers</p>
                                     </div>
                                 </div>
@@ -73,6 +91,7 @@
                         </div>
                     </div>
 
+                    <!-- Donation Amount -->
                     <div class="col-md-6 col-xl-3">
                         <div class="card">
                             <div class="card-body">
@@ -83,8 +102,9 @@
                                         </div>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <h3 class="text-dark my-1">Rs <span
-                                                data-plugin="counterup">{{ $total_donation }}</span></h3>
+                                        <h3 class="text-dark my-1">
+                                            Rs <span data-plugin="counterup">{{ $total_donation }}</span>
+                                        </h3>
                                         <p class="text-muted mb-0 card-label">Donation Amount</p>
                                     </div>
                                 </div>
@@ -92,6 +112,7 @@
                         </div>
                     </div>
 
+                    <!-- Total Trees -->
                     <div class="col-md-6 col-xl-3">
                         <div class="card">
                             <div class="card-body">
@@ -102,7 +123,8 @@
                                         </div>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <h3 class="text-dark my-1"><span data-plugin="counterup">{{ $total_trees }}</span>
+                                        <h3 class="text-dark my-1">
+                                            <span data-plugin="counterup">{{ $total_trees }}</span>
                                         </h3>
                                         <p class="text-muted mb-0 card-label">Total Trees</p>
                                     </div>
@@ -111,6 +133,7 @@
                         </div>
                     </div>
 
+                    <!-- Donations In -->
                     <div class="col-md-6 col-xl-3">
                         <div class="card">
                             <div class="card-body">
@@ -121,8 +144,9 @@
                                         </div>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <h3 class="text-dark my-1"><span
-                                                data-plugin="counterup">{{ $donations_in_count }}</span></h3>
+                                        <h3 class="text-dark my-1">
+                                            <span data-plugin="counterup">{{ $donations_in_count }}</span>
+                                        </h3>
                                         <p class="text-muted mb-0 card-label">Donations In</p>
                                     </div>
                                 </div>
@@ -130,6 +154,7 @@
                         </div>
                     </div>
 
+                    <!-- Donations Out -->
                     <div class="col-md-6 col-xl-3">
                         <div class="card">
                             <div class="card-body">
@@ -140,14 +165,17 @@
                                         </div>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <h3 class="text-dark my-1"><span
-                                                data-plugin="counterup">{{ $donations_out_count }}</span></h3>
+                                        <h3 class="text-dark my-1">
+                                            <span data-plugin="counterup">{{ $donations_out_count }}</span>
+                                        </h3>
                                         <p class="text-muted mb-0 card-label">Donations Out</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Projects -->
                     <div class="col-md-6 col-xl-3">
                         <div class="card">
                             <div class="card-body">
@@ -167,6 +195,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="row">
@@ -281,20 +310,10 @@
                         </div> <!-- end card-->
                     </div> <!-- end col-->
                 </div>
-                <!-- end row -->
             </div>
         </div>
     </main>
 @endsection
-<style>
-    .border-dashed {
-        border: 2px dashed #ddd;
-        background-color: #f9f9f9;
-    }
 
-    .card-label {
-        font-size: 10px;
-    }
-</style>
 @push('scripts')
 @endpush

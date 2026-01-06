@@ -29,12 +29,12 @@ return new class extends Migration
             $table->string('notes')->nullable();
             $table->string('purpose')->nullable();
             $table->timestamps();
-            $table->foreign('donation_id')->references('id')->on('donations')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('donation_id_out')->references('id')->on('donations')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('type_id')->references('id')->on('tree_types')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('user_id_ct')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('donation_id')->references('id')->on('donations')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('donation_id_out')->references('id')->on('donations')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('type_id')->references('id')->on('tree_types')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('user_id_ct')->references('id')->on('users')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('project_id')->references('id')->on('projects')->onDelete('restrict')->onUpdate('cascade');
         });
     }
 

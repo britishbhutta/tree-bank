@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('flow')->nullable()->comment('Donation Taken / Given');
             $table->string('donation_number')->nullable();
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('ws_id')->references('id')->on('work_shops')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('ws_id')->references('id')->on('work_shops')->onDelete('restrict')->onUpdate('cascade');
         });
     }
 

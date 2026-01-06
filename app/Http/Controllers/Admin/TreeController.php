@@ -26,24 +26,35 @@ public function create()
 }
 
     public function index(Request $request)
-    {
-        $trees = Tree::with(['projects','treeTypes'])
-            ->when($request->tree_id, function ($q) use ($request) {
-                $q->where('id', $request->tree_id);
-            })
-            ->when($request->project_id, function ($q) use ($request) {
-                $q->where('project_id', $request->project_id);
-            })
-            ->latest()
-            ->paginate(10);
+{
+    $trees = Tree::with(['projects', 'treeTypes', 'donations.users'])
+        ->when($request->tree_id, function ($q) use ($request) {
+            $q->where('id', $request->tree_id);
+        })
+        ->when($request->project_id, function ($q) use ($request) {
+            $q->where('project_id', $request->project_id);
+        })
+        ->when($request->death !== null && $request->death !== '', function ($q) use ($request) {
+            $q->where('death', $request->death);
+        })
+        ->when($request->user_id, function ($q) use ($request) {
+            $q->whereHas('donations', function ($donation) use ($request) {
+                $donation->where('user_id', $request->user_id);
+            });
+        })
+        ->latest()
+        ->paginate(10);
 
-        if ($request->ajax()) {
-            return view('admin.trees.partials.table', compact('trees'))->render();
-        }
-
-        $projects = Project::all();
-        return view('admin.trees.index', compact('trees','projects'));
+    if ($request->ajax()) {
+        return view('admin.trees.partials.table', compact('trees'))->render();
     }
+
+    $projects = Project::all();
+    $users = User::whereIn('role', [1, 2, 5])->get();
+
+    return view('admin.trees.index', compact('trees', 'projects', 'users'));
+}
+
 
     public function show(Tree $tree)
     {
@@ -74,7 +85,7 @@ public function create()
             $tree->user_id_ct = $data['user_id_ct'] ?: null;
         }
 
-        $fields = ['tree_type', 'planting_status', 'age', 'bought_date', 'location', 'planted_date', 'last_visited_date', 'notes', 'purpose','visit_req'];
+        $fields = ['tree_type', 'planting_status', 'age', 'bought_date', 'location', 'planted_date', 'last_visited_date', 'notes', 'purpose','visit_req','death','health_condition'];
 
         foreach($fields as $field) {
             if(isset($data[$field])) {

@@ -153,6 +153,18 @@
                                     Listing
                                 </a>
                             </li>
+                             <li>
+                                <a href="{{ route('admin.tree_names.add') }}"
+                                    class="{{ request()->routeIs('admin.tree_names.add') ? 'active' : '' }}">
+                                    Add Tree Names
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.tree_names_index') }}"
+                                    class="{{ request()->routeIs('admin.tree_names_index') ? 'active' : '' }}">
+                                    Detail Tree Names
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('tree_id')
                 ->references('id')
                 ->on('trees')
-                ->onDelete('cascade')
+                ->onDelete('restrict')
                 ->onUpdate('cascade');
         });
     }

@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import CountUp from "react-countup";
 import { useState } from "react";
 
+
 function Hero(props){
     return(
         <>

@@ -28,6 +28,13 @@ class User extends Authenticatable
         'role',
         'is_active',
         'password',
+        'city',
+        'tehsil',
+        'district',
+        'department',
+        'company_city',
+        'company_district',
+        'company_tehsil',
     ];
 
     /**
@@ -55,22 +62,26 @@ class User extends Authenticatable
 
     public function contact_messages()
     {
-        return $this->hasMany(Contact_Message::class, 'user_id','id');
+        return $this->hasMany(Contact_Message::class, 'user_id', 'id');
     }
+
     public function events()
     {
-        return $this->hasMany(Event::class, 'user_id','id');
+        return $this->hasMany(Event::class, 'user_id', 'id');
     }
+
     public function donations()
     {
-        return $this->hasMany(Donation::class, 'user_id','id');
+        return $this->hasMany(Donation::class, 'user_id', 'id');
     }
+
     public function plantedBy()
     {
-        return $this->hasMany(Tree::class, 'user_id','id');
+        return $this->hasMany(Tree::class, 'user_id', 'id');
     }
+
     public function CareTakenBy()
     {
-        return $this->hasMany(Tree::class, 'user_id_ct','id');
+        return $this->hasMany(Tree::class, 'user_id_ct', 'id');
     }
 }

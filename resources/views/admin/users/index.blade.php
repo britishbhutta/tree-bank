@@ -55,6 +55,8 @@
                                                 <span class="badge bg-success">Gardener</span>
                                             @elseif($user->role == 4)
                                                 <span class="badge bg-secondary">Caretaker</span>
+                                            @elseif($user->role == 5)
+                                                <span class="badge bg-secondary">Volunteer</span>
                                             @else
                                                 <span class="badge bg-primary">User</span>
                                             @endif

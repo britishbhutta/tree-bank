@@ -15,15 +15,17 @@ use Illuminate\Support\Facades\DB;
 class DonationController extends Controller
 {
     public function index()
-    {
-        $donations = Donation::with(['users', 'workshop.projects', 'trees.projects'])->paginate(10);
+{
+    $donations = Donation::with(['users', 'workshop.projects', 'trees.projects'])
+        ->orderBy('id', 'desc')
+        ->paginate(10);
 
-        return view('admin.donation.index', compact('donations'));
-    }
+    return view('admin.donation.index', compact('donations'));
+}
 
     public function create()
     {
-        $users = User::select('id', 'name')->whereIn('role', [1, 2])->get();
+        $users = User::select('id', 'name')->whereIn('role', [1,2,5])->get();
         $projects = Project::select('id', 'name')->get();
         $workshops = Work_Shop::select('id', 'name', 'project_id')->get();
         $treetype = TreeType::select('id', 'name')->get();

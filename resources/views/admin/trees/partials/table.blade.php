@@ -33,3 +33,8 @@
         <td colspan="7" class="text-center">No Trees Found</td>
     </tr>
 @endforelse
+<tr>
+    <td colspan="7">
+        {{ $trees->links('pagination::bootstrap-5') }}
+    </td>
+</tr>

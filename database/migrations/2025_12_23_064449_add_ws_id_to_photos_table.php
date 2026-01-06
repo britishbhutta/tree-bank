@@ -13,7 +13,7 @@ return new class extends Migration {
     $table->foreign('ws_id')
           ->references('id')
           ->on('work_shops')
-          ->onDelete('cascade');
+          ->onDelete('restrict');
     });
     }
 

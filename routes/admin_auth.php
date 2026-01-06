@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\TreeTypeController;
 use App\Http\Controllers\Admin\CurrencyController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\Admin\TreeNameController;
 
 Route::get('/update-currency-rates', [CurrencyController::class, 'updateCurrencyRates'])->name('cronjob');
 
@@ -73,7 +74,24 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('tree_types/edit/{id}', [TreeTypeController::class, 'edit'])->name('tree_types.edit');
     Route::post('tree_types/update/{id}', [TreeTypeController::class, 'update'])->name('tree_types.update');
     Route::get('tree_types/delete/{id}', [TreeTypeController::class, 'destroy'])->name('tree_types.delete');
-    Route::get('/trees/available', [TreeTypeController::class, 'availableTrees']);
+    // Route::get('/trees/available', [TreeTypeController::class, 'availableTrees']);
+    Route::get('/available-trees', [TreeTypeController::class, 'availableTrees']);
+
+     // Tree
+    Route::get('tree/create', [TreeController::class,'create'])->name('trees.create');
+    Route::post('tree/store', [TreeController::class,'store'])->name('trees.store');
+    Route::get('/trees', [TreeController::class, 'index'])->name('trees.index');
+    Route::get('trees/{tree}', [TreeController::class, 'show'])->name('trees.show');
+    Route::put('trees/{tree}', [TreeController::class, 'update'])->name('trees.update');
+
+    // Tree Names
+    Route::get('tree-names/add', [TreeNameController::class, 'addTreeName'])->name('tree_names.add');
+    Route::post('tree-names/save', [TreeNameController::class, 'saveTreeName'])->name('tree_names.save');
+    Route::get('tree-names', [TreeNameController::class, 'listTreeNames'])->name('tree_names_index');
+    Route::get('tree-names/edit/{id}', [TreeNameController::class, 'editTreeName'])->name('tree_names.edit');
+    Route::post('tree-names/update/{id}', [TreeNameController::class, 'updateTreeName'])->name('tree_names.update');
+    Route::delete('tree-names/delete/{id}', [TreeNameController::class, 'deleteTreeName'])->name('tree_names.delete');
+    Route::get('tree-names/{type_id}', [TreeNameController::class, 'availableTreeNames']);
 
     // Donation
     Route::get('donation', [DonationController::class,'index'])->name('donation.index');
@@ -82,13 +100,6 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('donation/{donation}/edit', [DonationController::class,'edit'])->name('donation.edit');
     Route::put('donation/{donation}', [DonationController::class,'update'])->name('donation.update');
     Route::delete('donation/{donation}', [DonationController::class,'destroy'])->name('donation.destroy');
-
-    // Tree
-    Route::get('tree/create', [TreeController::class,'create'])->name('trees.create');
-    Route::post('tree/store', [TreeController::class,'store'])->name('trees.store');
-    Route::get('/trees', [TreeController::class, 'index'])->name('trees.index');
-    Route::get('trees/{tree}', [TreeController::class, 'show'])->name('trees.show');
-    Route::put('trees/{tree}', [TreeController::class, 'update'])->name('trees.update');
 
     //Currencies
     Route::get('currencies',[CurrencyController::class, 'index'])->name('currencies');

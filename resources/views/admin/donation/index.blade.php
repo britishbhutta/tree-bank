@@ -38,12 +38,22 @@
                                     <td>{{ $donation->users->name }}</td>
                                     {{-- <td>{{ $donation->workshop?->projects?->name ?? '-' }}</td> --}}
                                     <td>
-                                        @if ($donation->workshop)
-                                            {{ $donation->workshop->projects->name ?? '-' }}
-                                        @else
-                                            {{ $donation->trees->first()->projects->name ?? '-' }}
-                                        @endif
+                                        @php
+                                            $projectName = null;
+                                            if ($donation->workshop && $donation->workshop->projects) {
+                                                $projectName = $donation->workshop->projects->name;
+                                            } elseif ($donation->trees->isNotEmpty()) {
+                                                $projectName = $donation->trees->first()->projects->name ?? null;
+                                            } else {
+                                                $outTree = \App\Models\Tree::where('donation_id_out', $donation->id)->first();
+                                                $projectName = $outTree?->projects?->name;
+                                            }
+                                        @endphp
+
+                                        {{ $projectName ?? '-' }}
                                     </td>
+
+
                                     <td>{{ $donation->workshop->name ?? 'N/A' }}</td>
                                     <td>{{ $donation->type }}</td>
                                     <td>{{ $donation->amount }}</td>

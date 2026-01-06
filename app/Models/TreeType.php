@@ -14,4 +14,9 @@ class TreeType extends Model
     {
         return $this->hasMany(Tree::class, 'type_id','id');
     }
+    
+     public function treeNames()
+    {
+        return $this->hasMany(TreeName::class, 'tree_type_id');
+    }
 }

@@ -22,6 +22,9 @@ class Tree extends Model
         'last_visited_date',
         'visit_req',
         'notes',
+        'tree_name_id',
+        'health_condition',
+        'death',
         'purpose',
     ];
     public function donations()
@@ -57,4 +60,10 @@ class Tree extends Model
     {
         return $this->belongsTo(TreeType::class, 'type_id');
     }
+
+    public function treeName()
+{
+    return $this->belongsTo(TreeName::class, 'tree_name_id', 'id');
+}
+
 }

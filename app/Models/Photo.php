@@ -11,13 +11,16 @@ class Photo extends Model
         'ws_id',
         'taken_date',
         'description',
+        'photo_path',
     ];
+
     public function trees()
-        {
-            return $this->belongsTo(Tree::class, 'tree_id', 'id');
-        }
+    {
+        return $this->belongsTo(Tree::class, 'tree_id', 'id');
+    }
+
     public function work_shop()
     {
-        return $this->belongsTo(Work_Shop::class, 'ws_id','id');
+        return $this->belongsTo(Work_Shop::class, 'ws_id', 'id');
     }
 }

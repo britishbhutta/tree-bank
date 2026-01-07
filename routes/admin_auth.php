@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\CurrencyController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\TreeNameController;
+use App\Http\Controllers\Admin\ContactController;
 
 Route::get('/update-currency-rates', [CurrencyController::class, 'updateCurrencyRates'])->name('cronjob');
 
@@ -74,7 +75,6 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('tree_types/edit/{id}', [TreeTypeController::class, 'edit'])->name('tree_types.edit');
     Route::post('tree_types/update/{id}', [TreeTypeController::class, 'update'])->name('tree_types.update');
     Route::get('tree_types/delete/{id}', [TreeTypeController::class, 'destroy'])->name('tree_types.delete');
-    // Route::get('/trees/available', [TreeTypeController::class, 'availableTrees']);
     Route::get('/available-trees', [TreeTypeController::class, 'availableTrees']);
 
      // Tree
@@ -83,6 +83,9 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/trees', [TreeController::class, 'index'])->name('trees.index');
     Route::get('trees/{tree}', [TreeController::class, 'show'])->name('trees.show');
     Route::put('trees/{tree}', [TreeController::class, 'update'])->name('trees.update');
+    // update photos
+    Route::delete('photos/{id}', [TreeController::class,'deletePhoto'])->name('photos.delete');
+    Route::post('admin/trees/{tree}/photos', [TreeController::class, 'uploadPhotos'])->name('trees.uploadPhotos');
 
     // Tree Names
     Route::get('tree-names/add', [TreeNameController::class, 'addTreeName'])->name('tree_names.add');
@@ -108,6 +111,10 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('editCurrency/{id}', [CurrencyController::class, 'edit'])->name('editCurrency');
     Route::put('updateCurrency/{id}', [CurrencyController::class, 'update'])->name('updateCurrency');
     Route::get('deleteCurrency/{id}', [CurrencyController::class, 'delete'])->name('deleteCurrency');
+
+    // Contact-Detail
+    Route::get('contact', [ContactController::class, 'contact'])->name('contact.index');
+    Route::delete('contact/{id}', [ContactController::class, 'destroyContact'])->name('contact.destroy');
 
     Route::post('/logout', [AdminLoginController::class, 'destroy'])->name('logout');
 });

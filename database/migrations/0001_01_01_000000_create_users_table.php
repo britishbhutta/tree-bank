@@ -25,7 +25,7 @@ return new class extends Migration
         $table->string('company_phone')->nullable();
         $table->string('company_address')->nullable();
         
-        $table->tinyInteger('role')->nullable()->comment('1=User,2=Company,3=Gardner ,4=Caretaker');
+        $table->tinyInteger('role')->nullable()->comment('1=User,2=Company,3=Gardner ,4=Caretaker ,5=Volunteer');
         
         $table->tinyInteger('is_active')->default(1)->comment('1 = Active, 2 = Inactive');
         $table->timestamp('email_verified_at')->nullable();

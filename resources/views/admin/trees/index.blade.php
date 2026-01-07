@@ -6,10 +6,8 @@
     <main class="content-page">
         <div class="content mt-4">
             <div class="container-fluid">
-
                 <div class="card">
                     <div class="card-body">
-
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h4 class="fw-bold">Trees List</h4>
                         </div>
@@ -68,7 +66,6 @@
                                 </tbody>
                             </table>
                         </div>
-
                     </div>
                 </div>
 

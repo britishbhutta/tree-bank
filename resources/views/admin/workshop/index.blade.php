@@ -35,7 +35,7 @@
                                 <th>Location</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
-                                <th>Images</th>
+                                {{-- <th>Images</th> --}}
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -53,17 +53,19 @@
                                     <td class="text-nowrap">
                                         {{ \Carbon\Carbon::parse($workshop->end_date)->format('d M Y, h:i A') }}
                                     </td>
-                                    <td class="text-nowrap">
-                                        @if ($workshop->images)
-                                            @foreach (json_decode($workshop->images) as $image)
-                                                <img src="{{ asset('storage/' . $image) }}" width="50" height="50"
-                                                    class="me-1 mb-1" style="object-fit:cover; border-radius:5px;">
-                                            @endforeach
-                                        @endif
-                                    </td>
+                                    {{-- <td class="text-nowrap">
+                                            @if ($workshop->photos->count() > 0)
+                                                @foreach ($workshop->photos as $photo)
+                                                    <img src="{{ asset('storage/'.$photo->photo_path) }}" width="50" height="50"
+                                                        class="me-1 mb-1" style="object-fit:cover; border-radius:5px;">
+                                                @endforeach
+                                            @else
+                                                <span class="text-muted">No images</span>
+                                            @endif
+                                        </td> --}}
                                     <td class="text-nowrap">
                                         <a href="{{ route('admin.workshop.edit', $workshop->id) }}"
-                                            class="btn btn-sm btn-warning">Edit</a>
+                                            class="btn btn-sm btn-warning">View / Edit</a>
                                         <form action="{{ route('admin.workshop.destroy', $workshop->id) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('Are you sure?');">
                                             @csrf

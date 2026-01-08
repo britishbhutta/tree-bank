@@ -67,6 +67,9 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('workshop/{workshop}/edit', [WorkshopController::class, 'edit'])->name('workshop.edit');
     Route::put('workshop/{workshop}', [WorkshopController::class, 'update'])->name('workshop.update');
     Route::delete('workshop/{workshop}', [WorkshopController::class, 'destroy'])->name('workshop.destroy');
+    // delete workshop photo by ajex
+    Route::delete('photo/{id}', [WorkshopController::class, 'deletePhoto'])->name('photo.delete');
+
 
     // tree type
     Route::get('tree_types', [TreeTypeController::class, 'index'])->name('tree_types.index');

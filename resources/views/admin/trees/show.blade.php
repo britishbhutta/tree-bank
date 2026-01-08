@@ -2,6 +2,9 @@
 @section('title', 'Tree Details')
 
 @section('content')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer">
+
     <main class="content-page">
         <div class="content mt-4">
             <div class="container-fluid">
@@ -19,6 +22,11 @@
                     <div class="card-body pt-3">
 
                         <div id="alert-success" class="alert alert-success d-none"></div>
+                        <div class="info-box mb-3">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>Click a field to edit, then update your information.</span>
+                        </div>
+
 
                         <div class="row">
                             <!-- Left Table -->
@@ -449,6 +457,24 @@
             width: 2px;
             background-color: #e5e5e5;
             min-height: 100%;
+        }
+
+       .info-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 14px;
+        background: #f0f6ff;    
+        border-left: 4px solid #04b132;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #333;
+        }
+
+        .info-box i {
+        color: #04b132;
+        font-size: 18px;
+        margin-top: 2px;
         }
     </style>
 

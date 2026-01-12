@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-function Home() {
+function Home1() {
   return (
     <div className="bg-[url('/FrontEnd/Images/homeTree.png')] bg-cover bg-center h-96 flex flex-col items-center justify-center text-white text-center gap-4 px-6">
       <h1 className="text-4xl font-bold text-[3.5rem] mb-8">
@@ -33,4 +33,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Home1;

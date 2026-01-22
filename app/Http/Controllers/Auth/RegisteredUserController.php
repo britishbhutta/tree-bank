@@ -38,19 +38,41 @@ class RegisteredUserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|confirmed',
             'address' => 'required',
-            'city' => 'required',
+            // 'city' => 'required',
             'tehsil' => 'required',
             'district' => 'required',
-            'account_type' => 'required|in:individual,company',
-            'company_name' => 'required_if:account_type,company',
-            'company_email' => 'required_if:account_type,company|email',
-            'company_phone' => 'required_if:account_type,company',
-            'department' => 'required_if:account_type,company',
-            'company_address' => 'required_if:account_type,company',
-            'company_city' => 'required_if:account_type,company',
-            'company_tehsil' => 'required_if:account_type,company',
-            'company_district' => 'required_if:account_type,company',
-        ]);
+            'role' => 'required|in:1,2',
+            'company_name' => 'required_if:role,2',
+            'company_email' => 'required_if:role,2',
+            'company_phone' => 'required_if:role,2',
+            'department' => 'required_if:role,2',
+            'company_address' => 'required_if:role,2',
+            // 'company_city' => 'required_if:role,2',
+            'company_tehsil' => 'required_if:role,2',
+            'company_district' => 'required_if:role,2',
+        ],
+        [
+            'name.required' => 'Name is required.',
+            'email.required' => 'Email is required.',
+            'email.email' => 'Please enter a valid email address.',
+            'email.unique' => 'This email is already registered.',
+
+            'password.required' => 'Password is required.',
+            'password.confirmed' => 'Password confirmation does not match.',
+
+            'role.required' => 'Please select a role.',
+            'role.in' => 'Invalid role selected.',
+
+            'company_name.required_if' => 'Company name is required.',
+            'company_email.required_if' => 'Company email is required.',
+            'company_phone.required_if' => 'Company phone is required.',
+            'department.required_if' => 'Department is required.',
+            'company_address.required_if' => 'Company Address is required.',
+            // 'company_city.required_if' => 'Company City is required.',
+            'company_tehsil.required_if' => 'Company Tehsil is required.',
+            'company_district.required_if' => 'Company District is required.',
+        ]
+        );
 
         if ($validator->fails()) {
             return response()->json([
@@ -58,16 +80,25 @@ class RegisteredUserController extends Controller
             ], 422);
         }
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        // $user = User::create([
+        //     'name' => $request->name,
+        //     'email' => $request->email,
+        //     'password' => Hash::make($request->password),
+        // ]);
 
-        event(new Registered($user));
-        // Auth::login($user);
+        // event(new Registered($user));
+        
 
-        return response()->json(['success' => true]);
+        $validated = $validator->validated();
+
+        $validated['password'] = Hash::make($validated['password']);
+
+        $user = User::create($validated);
+        Auth::login($user);
+        return response()->json([
+            'success' => true,
+            'message' => 'Your Account has been Created and You have been Logged In.'
+            ]);
     }
 
 }

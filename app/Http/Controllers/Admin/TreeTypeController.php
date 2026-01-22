@@ -34,7 +34,7 @@ class TreeTypeController extends Controller
         $treeType->description = $request->description;
         $treeType->save();
 
-        return redirect()->route('admin.tree_types.index')->with('success', 'Tree type added successfully.');
+        return redirect()->route('tree_types.index')->with('success', 'Tree type added successfully.');
     }
 
     public function edit($id)
@@ -56,7 +56,7 @@ class TreeTypeController extends Controller
         $treeType->description = $request->description;
         $treeType->save();
 
-        return redirect()->route('admin.tree_types.index')->with('success', 'Tree type updated successfully.');
+        return redirect()->route('tree_types.index')->with('success', 'Tree type updated successfully.');
     }
 
     public function destroy($id)
@@ -64,7 +64,7 @@ class TreeTypeController extends Controller
         $treeType = TreeType::findOrFail($id);
         $treeType->delete();
 
-        return redirect()->route('admin.tree_types.index')->with('success', 'Tree type deleted successfully.');
+        return redirect()->route('tree_types.index')->with('success', 'Tree type deleted successfully.');
     }
 
     //     public function availableTrees(Request $request)

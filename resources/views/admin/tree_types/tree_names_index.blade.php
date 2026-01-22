@@ -25,7 +25,7 @@
                         @endif
 
                         {{-- Add New Tree Name button --}}
-                        <a href="{{ route('admin.tree_names.add') }}" class="btn btn-primary mb-3">Add New Tree Name</a>
+                        <a href="{{ route('tree_names.add') }}" class="btn btn-primary mb-3">Add New Tree Name</a>
 
                         <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                             <table class="table table-bordered table-striped table-hover align-middle mb-0">
@@ -48,12 +48,12 @@
                                             <td class="text-center">
                                                 <div class="d-flex justify-content-center gap-1">
 
-                                                    <a href="{{ route('admin.tree_names.edit', $treeName->id) }}"
+                                                    <a href="{{ route('tree_names.edit', $treeName->id) }}"
                                                         class="btn btn-sm btn-warning">
                                                         Edit
                                                     </a>
 
-                                                    <form action="{{ route('admin.tree_names.delete', $treeName->id) }}"
+                                                    <form action="{{ route('tree_names.delete', $treeName->id) }}"
                                                         method="POST"
                                                         onsubmit="return confirm('Are you sure you want to delete this tree name?')">
                                                         @csrf

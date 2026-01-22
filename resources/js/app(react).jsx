@@ -5,11 +5,36 @@ import treeBankIcon from '../images/frontEnd/treeBankIcon.png';
 import { BrowserRouter, Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import CountUp from "react-countup";
-import { useState } from "react";
+// import { useState } from "react";
 import Home1 from "./frontEnd/home1.jsx"
 import Login from "./Pages/Auth/Login.jsx"
 import Register from "./Pages/Auth/Register.jsx"
+import { useLocation } from 'react-router-dom';
+import Swal from 'sweetalert2';
+// import { useEffect } from 'react';
+// import { useState, useEffect } from 'react';
+import axios from 'axios';
+// import { useNavigate } from "react-router-dom";
+import Dropdown from '@/Components/Dropdown';
+import { AuthProvider, useAuth } from './Pages/Auth/useAuth.jsx';
+import ReactDOM from "react-dom/client";
+import React from "react";
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
+// function useAuth() {
+//   const [user, setUser] = useState(null);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     axios.get('/api/user', { withCredentials: true })
+//       .then(res => setUser(res.data))
+//       .catch(() => setUser(null))
+//       .finally(() => setLoading(false));
+//   }, []);
+
+//   return { user, loading, isLoggedIn: !!user };
+// }
 function Hero(props){
     return(
         <>
@@ -59,6 +84,10 @@ function ProjectCard(props){
     )
 }
 function Footer() {
+    const { user, fetchUser } = useAuth();
+    useEffect(() => {
+        fetchUser(); // run once on app load
+    }, []);
   return (
     <footer className="bg-[#1b5e20] text-white">
       <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
@@ -83,7 +112,7 @@ function Footer() {
             <li><Link to="/home" className="hover:text-green-300">Home</Link></li>
             <li><Link to="/about" className="hover:text-green-300">About Us</Link></li>
             <li><Link to="/projects" className="hover:text-green-300">Projects</Link></li>
-            <li><Link to="/register" className="hover:text-green-300">Register</Link></li>
+            { !user && <li><Link to="/register" className="hover:text-green-300">Register</Link></li> }
             <li><Link to="/contact" className="hover:text-green-300">Contact</Link></li>
           </ul>
         </div>
@@ -109,6 +138,22 @@ function Footer() {
   )
 }
 function Home() {
+    const { user, fetchUser } = useAuth();
+    useEffect(() => {
+        fetchUser(); // run once on app load
+    }, []);
+    const location = useLocation();
+    useEffect(() => {
+        if (location.state?.message) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: location.state.message,
+                timer: 3000,
+                showConfirmButton: false,
+            });
+        }
+    }, []);
   return (
     <>
         <div className="bg-[url('/FrontEnd/Images/homeTree.png')] bg-cover bg-center h-96 flex flex-col items-center justify-center text-white text-center gap-4 px-6">
@@ -120,7 +165,7 @@ function Home() {
                 environmental protection, and awareness in Pakistan.
             </p>
             <div className="flex gap-4 mt-4">
-                <Link
+                {user ? (<div></div>) : (<Link
                 to="/register"
                 className="bg-green-600 px-6 py-2 rounded-full border border-transparent font-semibold
                             hover:bg-transparent hover:border hover:border-green-600
@@ -128,7 +173,8 @@ function Home() {
                             h-12 flex items-center justify-center"
                 >
                 Register As Volunteer
-                </Link>
+                </Link>) }
+                
                 <Link
                 to="/about"
                 className="border border-white px-6 py-2 rounded-full font-semibold
@@ -179,7 +225,7 @@ function Home() {
                 </div>
             </div>
         </section>
-        <div className="bg-[#2e7d32] bg-cover bg-center h-80 flex flex-col items-center justify-center text-white text-center gap-4 px-6">
+        {!user && <div className="bg-[#2e7d32] bg-cover bg-center h-80 flex flex-col items-center justify-center text-white text-center gap-4 px-6">
             <h3 className="text-4xl font-bold text-[1.5rem] mb-2 text-green-900 mt-5">
                 Join Our Green Movement
             </h3>
@@ -197,7 +243,7 @@ function Home() {
                 Join Now
                 </Link>
             </div>
-        </div>
+        </div>}
         <Footer />
     </>
   );
@@ -456,6 +502,39 @@ function Register1() {
         )
     }
 function TreeCount() { 
+    const [totalTrees, setTotalTrees] = useState(0);
+    const [myTrees, setMyTrees] = useState(0);
+    const [totalVolunteers, setVolunteers] = useState(0);
+    const [totalCities, setCities] = useState(0);
+    const [thisMonth, setThisMonth] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const { user, fetchUser } = useAuth();
+    useEffect(() => {
+        fetchUser(); 
+    }, []);
+    useEffect(() => {
+    const fetchCounts = async () => {
+        try {
+            setLoading(true);
+            const countsRes = await axios.get("/counts");
+            setTotalTrees(countsRes.data.total);
+            setVolunteers(countsRes.data.volunteers);
+            setCities(countsRes.data.cities);
+            setThisMonth(countsRes.data.thisMonth);
+            try {
+                const myTreesRes = await axios.get("/myTreesCount");
+                setMyTrees(myTreesRes.data.myTrees);
+            } catch (err) {
+                setMyTrees(0);
+            }
+                } catch (error) {
+                    console.error("Error fetching counts:", error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchCounts();
+        }, []);
     return(   
             <> 
                 <section className="py-10">
@@ -470,7 +549,9 @@ function TreeCount() {
                                 <i className="fas fa-seedling"></i> <span className='text-2xl'>Total Trees Planted</span>
                             </div>
                             <h2 className="text-8xl font-bold text-green-700">
-                                 <CountUp end={15782} duration={2.5} separator="," />
+                                {!loading && (
+                                    <CountUp end={totalTrees} duration={2.5} separator="," />
+                                )}
                             </h2>
                             <div className='mt-4'>
                                 <p className="text-sm text-gray-500 mt-5">
@@ -479,18 +560,41 @@ function TreeCount() {
                             </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                            <div className="bg-[#F6FFF6] rounded-xl py-6">
-                                <h3 className="text-2xl font-bold text-green-600">1,245</h3>
-                                <p className="text-sm text-gray-600 mt-1">Trees This Month</p>
-                            </div>
+                            {user ? (
+                                <div className="bg-[#F6FFF6] rounded-xl py-6">
+                                    <h3 className="text-2xl font-bold text-green-600">
+                                        {!loading && (
+                                            <CountUp end={myTrees} duration={2.5} separator="," />
+                                        )}
+                                    </h3>
+                                    <p className="text-sm text-gray-600 mt-1">My Trees</p>
+                                </div>
+                            ) : (
+                                <div className="bg-[#F6FFF6] rounded-xl py-6">
+                                    <h3 className="text-2xl font-bold text-green-600">
+                                        {!loading && (
+                                            <CountUp end={thisMonth} duration={2.5} separator="," />
+                                        )}
+                                    </h3>
+                                    <p className="text-sm text-gray-600 mt-1">Trees This Month</p>
+                                </div>
+                            )}
 
                             <div className="bg-[#F6FFF6] rounded-xl py-6">
-                                <h3 className="text-2xl font-bold text-green-600">856</h3>
+                                <h3 className="text-2xl font-bold text-green-600">
+                                    {!loading && (
+                                        <CountUp end={totalVolunteers} duration={2.5} separator="," />
+                                    )}
+                                </h3>
                                 <p className="text-sm text-gray-600 mt-1">Volunteers Registered</p>
                             </div>
 
                             <div className="bg-[#F6FFF6] rounded-xl py-6">
-                                <h3 className="text-2xl font-bold text-green-600">4</h3>
+                                <h3 className="text-2xl font-bold text-green-600">
+                                    {!loading && (
+                                        <CountUp end={totalCities} duration={2.5} separator="," />
+                                    )}
+                                </h3>
                                 <p className="text-sm text-gray-600 mt-1">Cities Active</p>
                             </div>
                             </div>
@@ -837,69 +941,224 @@ function Contact() {
             
     )
 }
+function Logout() {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
-function App() {
+  useEffect(() => {
+    const doLogout = async () => {
+      try {
+        await logout(); // 🔥 clears session + React state
+        navigate("/login", {
+          replace: true,
+          state: { message: "Logged out successfully" }
+        });
+      } catch (error) {
+        console.error("Logout error:", error);
+      }
+    };
+
+    doLogout();
+  }, []);
+
+  return null; // or a spinner if you want
+}
+function UserDropdown({ user }) {
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  // close when clicking outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login", {
+      replace: true,
+      state: { message: "Logged out successfully" },
+    });
+  };
+
   return (
-    <BrowserRouter>
-      <nav className="sticky top-0 z-50 flex flex items-center px-6 py-4 bg-white shadow-md">
-        <Link to={"/home"}>
-            <img src={treeBankIcon} alt="Tree Bank" className="h-10 mr-8 icon" />
-        </Link>
-        <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-6">
-          {/* {['home','about','projects','treeCount','gallery','contact','register','login','Registration'].map((path) => ( */}
-          {['home','about','projects','treeCount','gallery','contact','login','register'].map((path) => (
-            <NavLink
-              key={path}
-              to={`/${path}`}
-              end={path === 'home'}
-              className={({ isActive }) =>
-                `px-3 py-2 rounded font-roboto font-semibold ${
-                  isActive ? 'font-bold text-green-800' : 'text-green-800'
-                } hover:bg-[#81c784] hover:text-white`
-              }
-            >
-              {path.charAt(0).toUpperCase() + path.slice(1).replace(/([A-Z])/g, ' $1')}
-            </NavLink>
-          ))}
-        </div>
-      </nav>
+    <div className="relative ml-auto" ref={dropdownRef}>
+      {/* Trigger */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-green-900 hover:text-green-700"
+      >
+        <span className="text-lg">Welcome, {user.name}</span>
+        <i
+          className={`fas fa-chevron-down transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
+        ></i>
+      </button>
 
-      {/* Routes */}
-      <Routes>
-        <Route path="/react" element={<Navigate to="/home" replace />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/projects" element={<Projects />} />
-        {/* <Route path="/register" element={<Register1 />} /> */}
-        <Route path="/treeCount" element={<TreeCount />} />
-        <Route path="/gallery" element={<Gallery />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/login" element={
-            <>
-                <Hero 
-                    heroTitle='Login to Tree Plantation' 
-                    HeroDescription = 'Access your account and track your impact'
-                />
-                <Login />
-            </>
-            
-            } 
-        />
-        <Route path="/register" element={
-            <>
-                <Hero 
-                    heroTitle='Register for Tree Plantation' 
-                    HeroDescription = 'Join our green movement and make a difference'
-                />
-                <Register />
-            </>
-        } 
-        />
-      </Routes>
-    </BrowserRouter>
+      {/* Dropdown */}
+      {open && (
+        <div className="absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+          <div className="py-1">
+            <NavLink
+              to="/profile"
+              className="block px-4 py-2 text-sm text-green-900 hover:bg-green-100"
+            >
+              Profile
+            </NavLink>
+
+            <a href={'/my/dashboard'}
+              className="block px-4 py-2 text-sm text-green-900 hover:bg-green-100"
+            >
+              My Donations
+            </a>
+
+            <button
+              onClick={handleLogout}
+              className="block w-full text-left px-4 py-2 text-sm text-green-900 hover:bg-green-100"
+            >
+              Log Out
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
 
-const container = document.getElementById('root');
-createRoot(container).render(<App />);
+function App() {
+    const { user, fetchUser } = useAuth();
+    useEffect(() => {
+        fetchUser(); 
+    }, []);
+    const authLinks = ['logout'];
+
+    const commonLinks = ['home', 'about', 'projects', 'treeCount', 'gallery', 'contact'];
+    return (
+        <>
+        <nav className="sticky top-0 z-50 flex flex items-center px-6 py-4 bg-white shadow-md">
+            <Link to={"/home"}>
+                <img src={treeBankIcon} alt="Tree Bank" className="h-10 mr-8 icon" />
+            </Link>
+            <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-6">
+            {commonLinks.map((path) => (
+                <NavLink
+                key={path}
+                to={`/${path}`}
+                end={path === 'home'}
+                className={({ isActive }) =>
+                    `px-3 py-2 rounded font-roboto font-semibold ${
+                    isActive ? 'font-bold text-green-800' : 'text-green-800'
+                    } hover:bg-[#81c784] hover:text-white`
+                }
+                >
+                {path.charAt(0).toUpperCase() + path.slice(1).replace(/([A-Z])/g, ' $1')}
+                </NavLink>
+            ))}
+            {/* {(user ? authLinks : guestLinks).map((path) => (
+                <NavLink
+                    key={path}
+                    to={`/${path}`}
+                    className={({ isActive }) =>
+                        `px-3 py-2 rounded font-roboto font-semibold ${
+                            isActive ? 'font-bold text-green-800' : 'text-green-800'
+                        } hover:bg-[#81c784] hover:text-white`
+                    }
+                >
+                    {path.charAt(0).toUpperCase() + path.slice(1)}
+                </NavLink>
+                ))} */}
+                
+            </div>
+            <div className="ml-auto">
+                {user ? (
+                <UserDropdown user={user} />
+                ) : (
+                    <>
+                        <NavLink to={"/register"} className={({ isActive }) =>
+                            `px-3 py-2 rounded font-roboto font-semibold ${
+                                isActive ? 'font-bold text-green-800' : 'text-green-800'
+                            } hover:bg-[#81c784] hover:text-white`
+                        } >
+                            <i className="fas fa-user-plus text-green-600 mr-2"></i> 
+                            Register
+                        </NavLink>
+                        <NavLink to={"/login"} className={({ isActive }) =>
+                            `px-3 py-2 rounded font-roboto font-semibold ${
+                                isActive ? 'font-bold text-green-800' : 'text-green-800'
+                            } hover:bg-[#81c784] hover:text-white`
+                        } >
+                            <i className="fas fa-user text-green-600 mr-2"></i> 
+                            Log In
+                        </NavLink>
+                    </>
+                )}
+            </div>
+        </nav>
+
+        {/* Routes */}
+        <Routes>
+            <Route path="/react" element={<Navigate to="/home" replace />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/projects" element={<Projects />} />
+            {/* <Route path="/register" element={<Register1 />} /> */}
+            <Route path="/treeCount" element={<TreeCount />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/contact" element={<Contact />} />
+            {user ? (
+                <Route path="/logout" element={<Logout />} />
+            ) : (
+                <>
+            
+                    <Route path="/login" element={
+                        <>
+                            <Hero 
+                                heroTitle='Login to Tree Plantation' 
+                                HeroDescription = 'Access your account and track your impact'
+                            />
+                            
+                                <Login />
+                            
+                        </>
+                        
+                        } 
+                    />
+                    <Route path="/register" element={
+                        <>
+                            <Hero 
+                                heroTitle='Register for Tree Plantation' 
+                                HeroDescription = 'Join our green movement and make a difference'
+                            />
+                            <Register />
+                        </>
+                    } 
+                    />
+                </>
+            )}
+        </Routes>
+        </>
+    );
+}
+
+
+// const container = document.getElementById('root');
+// createRoot(container).render(<App />);
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <AuthProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AuthProvider>
+  </React.StrictMode>
+);

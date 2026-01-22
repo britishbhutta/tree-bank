@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-body">
-                        <a href="{{ route('admin.projects.create') }}" class="btn btn-primary mb-3">
+                        <a href="{{ route('projects.create') }}" class="btn btn-primary mb-3">
                             Add Project
                         </a>
 
@@ -47,10 +47,10 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="{{ route('admin.projects.edit', $project) }}"
+                                            <a href="{{ route('projects.edit', $project) }}"
                                                 class="btn btn-warning btn-sm">Edit</a>
 
-                                            <form action="{{ route('admin.projects.destroy', $project) }}" method="POST"
+                                            <form action="{{ route('projects.destroy', $project) }}" method="POST"
                                                 class="d-inline">
                                                 @csrf @method('DELETE')
                                                 <button onclick="return confirm('Are you sure?')"

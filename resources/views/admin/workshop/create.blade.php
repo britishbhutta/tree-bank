@@ -129,7 +129,7 @@
 
 <h4 class="fw-bold mb-4 border-bottom pb-2">Add Workshop</h4>
 
-<form method="POST" action="{{ route('admin.workshop.store') }}" enctype="multipart/form-data">
+<form method="POST" action="{{ route('workshop.store') }}" enctype="multipart/form-data">
     @csrf
 
     <div class="row">

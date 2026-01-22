@@ -17,7 +17,7 @@
                         </h4>
                     </div>
 
-                    <form method="POST" action="{{ route('admin.projects.store') }}">
+                    <form method="POST" action="{{ route('projects.store') }}">
                         @csrf
 
                         <div class="mb-3">

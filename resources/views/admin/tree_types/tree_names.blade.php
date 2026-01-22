@@ -23,7 +23,7 @@
                             <div class="alert alert-success">{{ session('success') }}</div>
                         @endif
 
-                        <form method="POST" action="{{ route('admin.tree_names.save') }}">
+                        <form method="POST" action="{{ route('tree_names.save') }}">
                             @csrf
 
                             <div class="mb-3">
@@ -51,7 +51,7 @@
                             </div>
 
                             <button type="submit" class="btn btn-primary">Submit</button>
-                            <a href="{{ route('admin.tree_names_index') }}" class="btn btn-secondary">Back</a>
+                            <a href="{{ route('tree_names_index') }}" class="btn btn-secondary">Back</a>
                         </form>
                     </div>
                 </div>

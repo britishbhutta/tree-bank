@@ -35,6 +35,15 @@
         <script src="{{asset('admin/assets/libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js') }}"></script>
         <script src="{{asset('admin/assets/js/pages/dashboard-2.init.js') }}"></script>
         <script src="{{asset('admin/assets/js/app.min.js') }}"></script>
+        @if(auth('admin')->check())
+            <script>
+                window.baseUrl = "{{ url('/admin') }}";
+            </script>
+        @elseif( auth()->check() && ( auth()->user()->role === '1' || auth()->user() === '2') )
+            <script>
+                window.baseUrl = "{{ url('/my') }}";
+            </script>
+        @endif 
         @stack('scripts')
     </body>
 </html>

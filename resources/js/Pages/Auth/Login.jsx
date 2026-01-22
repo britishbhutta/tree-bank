@@ -99,43 +99,123 @@
 //     );
 // }
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import InputError from '@/Components/InputError';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
+import Swal from 'sweetalert2';
+import axios from "axios";
+import {useAuth } from './useAuth.jsx';
+
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    console.log({ email, password });
-    alert('Submitted!');
+  const { fetchUser } = useAuth();
+//   useEffect(() => {
+//   axios.get("/sanctum/csrf-cookie", {
+//     withCredentials: true
+//   });
+// }, []);
+  const location = useLocation();
+  useEffect(() => {
+          if (location.state?.message) {
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Success',
+                  text: location.state.message,
+                  timer: 3000,
+                  showConfirmButton: false,
+              });
+          }
+      }, []);
+  const navigate = useNavigate();
+  const initialData = {
+    email: '',
+    password: '',
   };
+  const [data, setData] = useState(initialData);
+  const [errors, setErrors] = useState({});
+    const [processing, setProcessing] = useState(false);
+
+    const handleChange = (e) => {
+        setData({
+            ...data,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const submit = async (e) => {
+  e.preventDefault();
+  setProcessing(true);
+  setErrors({});
+
+  try {
+    const response = await axios.post("/getLogin", data);
+    setData(initialData);
+    setErrors({});
+    await fetchUser();
+    navigate("/home", {
+      state: {
+        message: response.data.message
+      }
+    });
+
+  } catch (error) {
+    if (error.response?.status === 422) {
+      setErrors(error.response.data.errors || {});
+    } else {
+      console.error("Login error:", error);
+    }
+  } finally {
+    setProcessing(false);
+  }
+};
+
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded shadow mt-8">
-      <form onSubmit={handleSubmit}>
-        <InputLabel htmlFor="email" value="Email" />
-        <TextInput
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          className="mt-1 block w-full p-2 mb-4"
-        />
-        <InputLabel htmlFor="password" value="Password" />
-        <TextInput
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          className="mt-1 block w-full p-2 mb-4"
-        />
-        <button type="submit" className="w-full bg-green-600 text-white p-2 rounded rounded-full hover:bg-green-700 hover:-translate-y-1 duration-300 mt-4">
-          Login
-        </button>
-      </form>
+    <div className="min-h-[40vh] flex items-center justify-center px-4 mt-8">
+      <form onSubmit={submit}
+        className={`w-full max-w-xl bg-white p-8 rounded-2xl shadow-lg transition-all duration-300`}
+        >
+          <div
+              className="grid gap-4 grid-cols-1 md">
+              <InputLabel htmlFor="email">Email<span className="text-red-500 ml-1">*</span></InputLabel>
+              <TextInput
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={data.email}
+                onChange={handleChange}
+                className="mt-1 block w-full p-2 mb-4"
+              />
+              <InputError message={errors.email?.[0]} />
+              
+              <InputLabel htmlFor="password">Password<span className="text-red-500 ml-1">*</span></InputLabel>
+              <TextInput
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={data.password}
+                onChange={handleChange}
+                className="mt-1 block w-full p-2 mb-4"
+              />
+              <InputError message={errors.password?.[0]} />
+
+              <button type="submit" className="w-full bg-green-600 text-white p-2 rounded rounded-full hover:bg-green-700 hover:-translate-y-1 duration-300 mt-4" disabled={processing}>
+                {processing ? 'Logging In...' : 'Log In'}
+              </button>
+            </div>
+            <div className="mt-4 text-center">
+                <Link
+                    to="/register"
+                    className="text-sm text-gray-600 underline hover:text-gray-900"
+                >
+                    Get Registered
+                </Link>
+            </div>
+        </form>
     </div>
   );
 }

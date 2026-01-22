@@ -61,7 +61,7 @@ public function store(Request $request)
         }
     }
 
-    return redirect()->route('admin.workshop.index')
+    return redirect()->route('workshop.index')
                      ->with('success','Workshop created successfully');
 }
 
@@ -114,7 +114,7 @@ public function store(Request $request)
             }
         }
 
-        return redirect()->route('admin.workshop.index', $workshop->id)
+        return redirect()->route('workshop.index', $workshop->id)
                          ->with('success','Workshop updated successfully');
     }
 
@@ -142,7 +142,7 @@ public function store(Request $request)
 
         $workshop->delete();
 
-        return redirect()->route('admin.workshop.index')
+        return redirect()->route('workshop.index')
                          ->with('success','Workshop and photos deleted successfully');
     }
 

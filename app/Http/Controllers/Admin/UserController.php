@@ -85,7 +85,7 @@ public function store(Request $request)
         new AccountCreatedMail($user->name, $mailTo, $plainPassword)
     );
 
-    return redirect()->route('admin.users.index')
+    return redirect()->route('users.index')
         ->with('success', 'User created & email sent successfully!');
 }
 
@@ -178,7 +178,7 @@ public function update(Request $request, User $user)
     $user->update($data);
 
     return redirect()
-        ->route('admin.users.index')
+        ->route('users.index')
         ->with('success', 'User updated successfully');
 }
 

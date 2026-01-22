@@ -35,15 +35,40 @@
                                     <option value="0">Alive</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <select name="user_id" id="user_id" class="form-control">
-                                    <option value="">-- Select Donor --</option>
-                                    @foreach ($users as $user)
-                                        <option value="{{ $user->id }}">
-                                            {{ $user->name }}
+                            @if(auth('admin')->check())
+                                <div class="col-md-3">
+                                    <select name="user_id" id="user_id" class="form-control">
+                                        <option value="">-- Select Donor --</option>
+                                        @foreach ($users as $user)
+                                            <option value="{{ $user->id }}">
+                                                {{ $user->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endif
+                            @if(auth('admin')->check())
+                                <div class="col-md-3">
+                            @else
+                                <div class="col-md-2">
+                            @endif
+                                <select name="donation_id" id="donation_id" class="form-control">
+                                    <option value="">-- Select Donation In --</option>
+                                    @foreach ($donations as $donation)
+                                        <option value="{{ $donation->id }}">
+                                            {{ $donation->donation_number }}
                                         </option>
                                     @endforeach
                                 </select>
+                                
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button"
+                                    class="btn btn-outline-primary"
+                                    title="Reset Search"
+                                    onclick="window.location.reload();">
+                                    <i class="fa fa-rotate-right"></i>
+                                </button>
                             </div>
                         </form>
 
@@ -83,13 +108,14 @@
 
             function fetchTrees() {
                 $.ajax({
-                    url: "{{ route('admin.trees.index') }}",
+                    url: "{{ route('trees.index') }}",
                     type: "GET",
                     data: {
                         tree_id: $('#tree_id').val(),
                         project_id: $('#project_id').val(),
                         death: $('#death').val(),
-                        user_id: $('#user_id').val()
+                        user_id: $('#user_id').val(),
+                        donation_id: $('#donation_id').val()
                     },
                     beforeSend: function() {
                         $('#treeTable').html(`
@@ -113,6 +139,7 @@
             $('#project_id').on('change', fetchTrees);
             $('#death').on('change', fetchTrees);
             $('#user_id').on('change', fetchTrees);
+            $('#donation_id').on('change', fetchTrees);
         });
     </script>
 @endpush

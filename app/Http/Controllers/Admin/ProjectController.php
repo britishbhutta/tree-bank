@@ -36,7 +36,7 @@ class ProjectController extends Controller
             'is_active'   => now()->between($request->start_date, $request->end_date),
         ]);
 
-        return redirect()->route('admin.projects.index')
+        return redirect()->route('projects.index')
             ->with('success', 'Project created successfully');
     }
 
@@ -62,7 +62,7 @@ class ProjectController extends Controller
             'is_active'   => now()->between($request->start_date, $request->end_date),
         ]);
 
-        return redirect()->route('admin.projects.index')
+        return redirect()->route('projects.index')
             ->with('success', 'Project updated successfully');
     }
 
@@ -70,7 +70,7 @@ class ProjectController extends Controller
     {
         $project->delete();
 
-        return redirect()->route('admin.projects.index')
+        return redirect()->route('projects.index')
             ->with('success', 'Project deleted successfully');
     }
 }

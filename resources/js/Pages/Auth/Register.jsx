@@ -1,14 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
+import { useNavigate } from 'react-router-dom';
+import {useAuth } from './useAuth.jsx';
+
+
 
 export default function Register() {
-    const [data, setData] = useState({
+    const { fetchUser } = useAuth();
+    // useEffect(() => {
+    //   axios.get("/sanctum/csrf-cookie", {
+    //     withCredentials: true
+    //   });
+    // }, []);
+    const navigate = useNavigate();
+    const initialData = {
     name: '',
     email: '',
     password: '',
@@ -19,9 +29,8 @@ export default function Register() {
     tehsil: '',
     district: '',
 
-    account_type: 'individual', // 👈 default
+    role: '1', // 👈 default
 
-    // company fields
     company_name: '',
     company_email: '',
     company_phone: '',
@@ -30,8 +39,9 @@ export default function Register() {
     company_city: '',
     company_tehsil: '',
     company_district: '',
-});
+};
 
+const [data, setData] = useState(initialData);
 
     const [errors, setErrors] = useState({});
     const [processing, setProcessing] = useState(false);
@@ -44,38 +54,39 @@ export default function Register() {
     };
 
     const submit = async (e) => {
-    e.preventDefault();
-    setProcessing(true);
-    setErrors({});
+  e.preventDefault();
+  setProcessing(true);
+  setErrors({});
 
-    try {
-        const response = await fetch('/getRegistered', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-            },
-            body: JSON.stringify(data),
-        });
-
-        const result = await response.json();
-
-        if (response.status === 422) {
-            // Validation failed
-            setErrors(result.errors || {});
-        } else if (response.ok) {
-            // Success
-            alert('Registered successfully!');
-        } else {
-            console.error('Unexpected response:', result);
+  try {
+    const response = await axios.post("/getRegistered", data, {
+      withCredentials: true, 
+    });
+    const result = response.data; 
+    if (response.status === 422) {
+      setErrors(result.errors || {});
+    } else {
+      setData(initialData);
+      setErrors({});
+      await fetchUser();
+      navigate('/home', {
+        state: {
+          message: result.message
         }
-    } catch (error) {
-        console.error('Fetch error:', error);
-    } finally {
-        setProcessing(false);
+      });
     }
+
+  } catch (error) {
+    if (error.response?.status === 422) {
+      setErrors(error.response.data.errors || {});
+    } else {
+      console.error("Register error:", error);
+    }
+  } finally {
+    setProcessing(false);
+  }
 };
+
 
 
     return (
@@ -84,12 +95,12 @@ export default function Register() {
             <form
                 onSubmit={submit}
                 className={`w-full ${
-                    data.account_type === 'company' ? 'max-w-5xl' : 'max-w-xl'
+                    data.role === '2' ? 'max-w-5xl' : 'max-w-xl'
                 } bg-white p-8 rounded-2xl shadow-lg transition-all duration-300`}
             >
                 <div
                     className={`grid gap-8 ${
-                        data.account_type === 'company'
+                        data.role === '2'
                             ? 'grid-cols-1 md:grid-cols-2'
                             : 'grid-cols-1'
                     }`}
@@ -100,7 +111,7 @@ export default function Register() {
                             Personal Details
                         </h3>
                         <div className="mt-4">
-                            <InputLabel htmlFor="name" value="Name" />
+                            <InputLabel htmlFor="name">Name<span className="text-red-500 ml-1">*</span></InputLabel>
                             <TextInput
                                 id="name"
                                 name="name"
@@ -114,7 +125,7 @@ export default function Register() {
                         </div>
 
                         <div className="mt-4">
-                            <InputLabel htmlFor="email" value="Email" />
+                            <InputLabel htmlFor="email">Email<span className="text-red-500 ml-1">*</span></InputLabel>
                             <TextInput
                                 id="email"
                                 type="email"
@@ -129,7 +140,7 @@ export default function Register() {
                         </div>
 
                         <div className="mt-4">
-                            <InputLabel htmlFor="password" value="Password" />
+                            <InputLabel htmlFor="password">Password<span className="text-red-500 ml-1">*</span></InputLabel>
                             <TextInput
                                 id="password"
                                 type="password"
@@ -142,12 +153,9 @@ export default function Register() {
                             />
                             <InputError message={errors.password?.[0]} />
                         </div>
-
                         <div className="mt-4">
                             <InputLabel
-                                htmlFor="password_confirmation"
-                                value="Confirm Password"
-                            />
+                                htmlFor="password_confirmation">Confirm Password<span className="text-red-500 ml-1">*</span></InputLabel>
                             <TextInput
                                 id="password_confirmation"
                                 type="password"
@@ -159,37 +167,22 @@ export default function Register() {
                                 
                             />
                         </div>
-
-                        <div className="mt-4">
-                            <InputLabel value="Address" />
-                            <TextInput
-                                name="address"
-                                placeholder="Type Address"
-                                value={data.address}
-                                onChange={handleChange}
-                                className="w-full p-2 mb-4"
-                                
-                            />
-                            <InputError message={errors.address?.[0]} />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <TextInput
+                        <InputLabel>Address<span className="text-red-500 ml-1">*</span></InputLabel>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* <TextInput
                                 name="city"
                                 placeholder="City"
                                 value={data.city}
                                 onChange={handleChange}
                                 className="p-2"
                                 
-                            />
-                            
+                            /> */}
                             <TextInput
                                 name="tehsil"
                                 placeholder="Tehsil"
                                 value={data.tehsil}
                                 onChange={handleChange}
                                 className="p-2"
-                                
                             />
                             <TextInput
                                 name="district"
@@ -197,32 +190,41 @@ export default function Register() {
                                 value={data.district}
                                 onChange={handleChange}
                                 className="p-2"
-                                
                             />
                         </div>
-                        <InputError message={errors.city?.[0]} />
                         <InputError message={errors.tehsil?.[0]} />
                         <InputError message={errors.district?.[0]} />
+                        <div className="mt-4">
+                            <TextInput
+                                name="address"
+                                placeholder="Type Address"
+                                value={data.address}
+                                onChange={handleChange}
+                                className="w-full p-2 mb-4"
+                            />
+                            <InputError message={errors.address?.[0]} />
+                        </div>
+                        {/* <InputError message={errors.city?.[0]} /> */}
                         <div className="mt-6">
-                            <InputLabel value="Account Type" />
+                            <InputLabel>Account Type<span className="text-red-500 ml-1">*</span></InputLabel>
                             <div className="flex gap-6 mt-2">
                                 <label className="flex items-center gap-2">
                                     <input
                                         type="radio"
-                                        name="account_type"
-                                        value="individual"
-                                        checked={data.account_type === 'individual'}
+                                        name="role"
+                                        value="1"
+                                        checked={data.role === '1'}
                                         onChange={handleChange}
                                     />
-                                    Individual
+                                    Volunteer
                                 </label>
 
                                 <label className="flex items-center gap-2">
                                     <input
                                         type="radio"
-                                        name="account_type"
-                                        value="company"
-                                        checked={data.account_type === 'company'}
+                                        name="role"
+                                        value="2"
+                                        checked={data.role === '2'}
                                         onChange={handleChange}
                                     />
                                     Company
@@ -244,18 +246,18 @@ export default function Register() {
                                 to="/login"
                                 className="text-sm text-gray-600 underline hover:text-gray-900"
                             >
-                                Already registered?
+                                Already Registered?
                             </Link>
                         </div>
                     </div>
 
                     {/* RIGHT SIDE – COMPANY */}
-                    {data.account_type === 'company' && (
+                    {data.role === '2' && (
                         <div className="p-6 rounded-xl">
                             <h3 className="text-lg font-semibold mb-4 text-green-700">
                                 Company Details
                             </h3>
-                            <InputLabel value="Name" />
+                            <InputLabel>Name<span className="text-red-500 ml-1">*</span></InputLabel>
                             <TextInput
                                 name="company_name"
                                 placeholder="Type Name"
@@ -265,7 +267,7 @@ export default function Register() {
                                 
                             />
                             <InputError message={errors.company_name?.[0]} />
-                            <InputLabel value="Email" />
+                            <InputLabel>Email<span className="text-red-500 ml-1">*</span></InputLabel>
                             <TextInput
                                 name="company_email"
                                 type="email"
@@ -276,7 +278,7 @@ export default function Register() {
                                 
                             />
                             <InputError message={errors.company_email?.[0]} />
-                            <InputLabel value="Phone" />
+                            <InputLabel>Phone<span className="text-red-500 ml-1">*</span></InputLabel>
                             <TextInput
                                 name="company_phone"
                                 placeholder="Type Phone"
@@ -286,7 +288,7 @@ export default function Register() {
                                 
                             />
                             <InputError message={errors.company_phone?.[0]} />
-                            <InputLabel value="Department" />
+                            <InputLabel>Department<span className="text-red-500 ml-1">*</span></InputLabel>
                             <TextInput
                                 name="department"
                                 placeholder="Department"
@@ -296,25 +298,16 @@ export default function Register() {
                                 
                             />
                             <InputError message={errors.department?.[0]} />
-                            <InputLabel value="Address" />
-                            <TextInput
-                                name="company_address"
-                                placeholder="Type Address"
-                                value={data.company_address}
-                                onChange={handleChange}
-                                className="w-full p-2 mb-3"
-                                
-                            />
-                            <InputError message={errors.company_address?.[0]} />
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                <TextInput
+                            <InputLabel>Address<span className="text-red-500 ml-1">*</span></InputLabel>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {/* <TextInput
                                     name="company_city"
                                     placeholder="City"
                                     value={data.company_city}
                                     onChange={handleChange}
                                     className="p-2"
                                     
-                                />
+                                /> */}
                                 <TextInput
                                     name="company_tehsil"
                                     placeholder="Tehsil"
@@ -332,9 +325,19 @@ export default function Register() {
                                     
                                 />
                             </div>
-                            <InputError message={errors.company_city?.[0]} />
+                            {/* <InputError message={errors.company_city?.[0]} /> */}
                             <InputError message={errors.company_tehsil?.[0]} />
                             <InputError message={errors.company_district?.[0]} />
+                            <TextInput
+                                name="company_address"
+                                placeholder="Type Address"
+                                value={data.company_address}
+                                onChange={handleChange}
+                                className="w-full p-2 mb-3"
+                                
+                            />
+                            <InputError message={errors.company_address?.[0]} />
+                            
                         </div>
                     )}
                 </div>

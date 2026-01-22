@@ -10,7 +10,7 @@
             {{-- Page Header --}}
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="mb-0">Users List</h4>
-                <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+                <a href="{{ route('users.create') }}" class="btn btn-primary">
                     + Add User
                 </a>
             </div>
@@ -67,12 +67,12 @@
                                         </td>
 
                                         <td class="text-end">
-                                            <a href="{{ route('admin.users.edit', $user->id) }}"
+                                            <a href="{{ route('users.edit', $user->id) }}"
                                                class="btn btn-sm btn-warning">
                                                 Edit
                                             </a>
 
-                                            <form action="{{ route('admin.users.destroy', $user->id) }}"
+                                            <form action="{{ route('users.destroy', $user->id) }}"
                                                   method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')

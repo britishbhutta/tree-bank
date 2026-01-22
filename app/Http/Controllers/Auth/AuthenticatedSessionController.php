@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Validator;
+
 
 class AuthenticatedSessionController extends Controller
 {
@@ -27,19 +29,27 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): \Illuminate\Http\JsonResponse
     {
         $request->authenticate();
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // return redirect()->intended(route('dashboard', absolute: false));
+        // $validator = Validator::make($request->all(), [
+        //     'email' => 'required|email',
+        //     'password' => 'required',
+        // ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'You have been Logged In Successfully.'
+            ]);
     }
 
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request): \Illuminate\Http\JsonResponse
     {
         Auth::guard('web')->logout();
 
@@ -47,6 +57,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // return redirect('/');
+        return response()->json([
+            'success' => true,
+            'message' => 'You have been Logged Out Successfully.'
+            ]);
     }
 }

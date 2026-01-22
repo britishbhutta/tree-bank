@@ -30,7 +30,7 @@ class TreeNameController extends Controller
             'description' => $request->description,
         ]);
 
-        return redirect()->route('admin.tree_names_index')->with('success', 'Tree Name added successfully!');
+        return redirect()->route('tree_names_index')->with('success', 'Tree Name added successfully!');
     }
 
     public function listTreeNames()
@@ -63,7 +63,7 @@ class TreeNameController extends Controller
             'description' => $request->description,
         ]);
 
-        return redirect()->route('admin.tree_names_index')->with('success', 'Tree Name updated successfully!');
+        return redirect()->route('tree_names_index')->with('success', 'Tree Name updated successfully!');
     }
 
     public function deleteTreeName($id)
@@ -72,7 +72,7 @@ class TreeNameController extends Controller
             $treeName = TreeName::findOrFail($id);
             $treeName->delete();
 
-            return redirect()->route('admin.tree_names_index')
+            return redirect()->route('tree_names_index')
                 ->with('success', 'Tree Name deleted successfully!');
         } catch (\Illuminate\Database\QueryException $e) {
 

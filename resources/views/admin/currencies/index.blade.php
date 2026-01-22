@@ -29,10 +29,10 @@
                     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
                         <h4 class="mb-0 fw-bold">Currencies</h4>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.cronjob') }}" class="btn btn-info">
+                            <a href="{{ route('cronjob') }}" class="btn btn-info">
                                 Run Cron Job
                             </a>
-                            <a href="{{ route('admin.createCurrency') }}" class="btn btn-success">
+                            <a href="{{ route('createCurrency') }}" class="btn btn-success">
                                 Add Currency
                             </a>
                         </div>
@@ -76,10 +76,10 @@
                                             </span>
                                         </td>
                                         <td class="text-center">
-                                            <a href="{{ route('admin.editCurrency', $currency->id) }}" class="text-primary me-2" title="Edit">
+                                            <a href="{{ route('editCurrency', $currency->id) }}" class="text-primary me-2" title="Edit">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
-                                            <a href="{{ route('admin.deleteCurrency', $currency->id) }}" class="text-danger btn-delete" title="Delete" onclick="return confirm('Are you sure you want to delete this currency?')">
+                                            <a href="{{ route('deleteCurrency', $currency->id) }}" class="text-danger btn-delete" title="Delete" onclick="return confirm('Are you sure you want to delete this currency?')">
                                                 <i class="fa-solid fa-trash"></i>
                                             </a>
                                         </td>

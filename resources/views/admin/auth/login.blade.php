@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Log In | UBold - Responsive Admin Dashboard Template</title>
+        <title>Log In | Tree Bank Admin Panel</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
         <meta content="Coderthemes" name="author" />
@@ -54,7 +54,7 @@
                                     </div>
                                 </div>
                                 <div class="mt-4">
-                                    <form method="POST" action="{{ route('admin.login') }}">
+                                    <form method="POST" action="{{ route('login') }}">
                                         @csrf
                                         <div class="mb-3">
                                             <label for="emailaddress" class="form-label">Email address</label>

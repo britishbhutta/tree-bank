@@ -62,8 +62,11 @@ class Tree extends Model
     }
 
     public function treeName()
-{
-    return $this->belongsTo(TreeName::class, 'tree_name_id', 'id');
-}
+    {
+        return $this->belongsTo(TreeName::class, 'tree_name_id', 'id');
+    }
 
+    protected $casts = [
+        'death' => 'boolean',
+    ];
 }

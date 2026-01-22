@@ -32,6 +32,7 @@ class User extends Authenticatable
         'tehsil',
         'district',
         'department',
+        'company_name',
         'company_city',
         'company_district',
         'company_tehsil',

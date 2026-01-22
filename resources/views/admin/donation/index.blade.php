@@ -9,10 +9,13 @@
                 @if (session('success'))
                     <div class="alert alert-success" id="flash-message">{{ session('success') }}</div>
                 @endif
+                @if (session('message'))
+                    <div class="alert alert-danger">{{ session('message') }}</div>
+                @endif
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="fw-bold">Donations</h4>
-                    <a href="{{ route('admin.donation.create') }}" class="btn btn-primary">Add Donation</a>
+                    <a href="{{ route('donation.create') }}" class="btn btn-primary">Add Donation</a>
                 </div>
 
                 <div class="table-responsive">
@@ -20,7 +23,9 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>User</th>
+                                @if(auth('admin')->check())
+                                    <th>User</th>
+                                @endif
                                 <th>Project</th>
                                 <th>Workshop</th>
                                 <th>Type</th>
@@ -35,7 +40,9 @@
                             @forelse($donations as $donation)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $donation->users->name }}</td>
+                                    @if(auth('admin')->check())
+                                        <td>{{ $donation->users->name }}</td>
+                                    @endif
                                     {{-- <td>{{ $donation->workshop?->projects?->name ?? '-' }}</td> --}}
                                     <td>
                                         @php
@@ -61,9 +68,9 @@
                                     <td>{{ $donation->flow }}</td>
                                     <td>{{ $donation->donation_number }}</td>
                                     <td>
-                                        <a href="{{ route('admin.donation.edit', $donation->id) }}"
-                                            class="btn btn-sm btn-warning">Edit</a>
-                                        <form action="{{ route('admin.donation.destroy', $donation->id) }}" method="POST"
+                                        <a href="{{ route('donation.edit', $donation->id) }}"
+                                            class="btn btn-sm btn-warning $donation->flow === 'Own ?? disabled">Edit</a>
+                                        <form action="{{ route('donation.destroy', $donation->id) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('Are you sure?');">
                                             @csrf
                                             @method('DELETE')

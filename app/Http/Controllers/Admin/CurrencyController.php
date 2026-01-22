@@ -40,7 +40,7 @@ class CurrencyController extends Controller
         $currency->is_active = $validatedData['is_active'];
         $currency->save();
 
-        return redirect()->route('admin.currencies')
+        return redirect()->route('currencies')
             ->with('status','Currency Created Successfully.');
     }
 
@@ -71,7 +71,7 @@ class CurrencyController extends Controller
         $currency->is_active = $validatedData['is_active'];
         $currency->update();
 
-        return redirect()->route('admin.currencies')
+        return redirect()->route('currencies')
             ->with('status', 'Currency Record Updated Successfully.');
     }
 
@@ -80,7 +80,7 @@ class CurrencyController extends Controller
         $currency = Currency::find($id);
         $currency->delete();
 
-        return redirect()->route('admin.currencies')
+        return redirect()->route('currencies')
             ->with('statusDanger','Currency Data Deleted Successfully.');
     }
 

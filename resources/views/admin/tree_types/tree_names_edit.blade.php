@@ -19,7 +19,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('admin.tree_names.update', $treeName->id) }}">
+                    <form method="POST" action="{{ route('tree_names.update', $treeName->id) }}">
                         @csrf
 
                         <div class="mb-3">
@@ -45,7 +45,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary">Update</button>
-                        <a href="{{ route('admin.tree_names_index') }}" class="btn btn-secondary">Back</a>
+                        <a href="{{ route('tree_names_index') }}" class="btn btn-secondary">Back</a>
                     </form>
 
                 </div>

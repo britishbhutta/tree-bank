@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('trees', function (Blueprint $table) {
             $table->unsignedInteger('tree_name_id')->nullable()->after('type_id');
             $table->string('health_condition')->nullable()->after('planted_date');
-            $table->boolean('death')->nullable()->after('health_condition');
+            $table->boolean('death')->nullable()->after('health_condition')->comment('1=Death,0=Alive');
 
           $table->foreign('tree_name_id')
             ->references('id')

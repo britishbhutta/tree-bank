@@ -13,6 +13,9 @@
 @endpush
 
 @section('content')
+    <?php
+        $user = auth()->user();
+    ?>
     <main class="content-page">
         <div class="content">
             <div class="container-fluid">
@@ -21,7 +24,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box">
-                            <h4 class="page-title">Dashboard</h4>
+                            @if($user && ($user->role == 1 || $user->role == 2) )
+                                <h4 class="page-title">Dashboard</h4>
+                            @else
+                                <h4 class="page-title">Admin Dashboard</h4>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -29,67 +36,69 @@
                 <div class="row">
 
                     <!-- Donors -->
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-6">
-                                        <div class="avatar-sm bg-blue rounded shadow-lg">
-                                            <i class="fe-user avatar-title font-22 text-white"></i>
+                    @if(auth('admin')->check())
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-blue rounded shadow-lg">
+                                                <i class="fe-user avatar-title font-22 text-white"></i>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-6 text-end">
-                                        <h3 class="text-dark my-1">
-                                            <span data-plugin="counterup">{{ $donar_count }}</span>
-                                        </h3>
-                                        <p class="text-muted mb-0 card-label">Donors</p>
+                                        <div class="col-6 text-end">
+                                            <h3 class="text-dark my-1">
+                                                <span data-plugin="counterup">{{ $donar_count }}</span>
+                                            </h3>
+                                            <p class="text-muted mb-0 card-label">Donors</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Gardeners -->
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-6">
-                                        <div class="avatar-sm bg-success rounded shadow-lg">
-                                            <i class="fe-user avatar-title font-22 text-white"></i>
+                        <!-- Gardeners -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-success rounded shadow-lg">
+                                                <i class="fe-user avatar-title font-22 text-white"></i>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-6 text-end">
-                                        <h3 class="text-dark my-1">
-                                            <span data-plugin="counterup">{{ $gardner_count }}</span>
-                                        </h3>
-                                        <p class="text-muted mb-0 card-label">Gardeners</p>
+                                        <div class="col-6 text-end">
+                                            <h3 class="text-dark my-1">
+                                                <span data-plugin="counterup">{{ $gardner_count }}</span>
+                                            </h3>
+                                            <p class="text-muted mb-0 card-label">Gardeners</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Caretakers -->
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-6">
-                                        <div class="avatar-sm bg-warning rounded shadow-lg">
-                                            <i class="fe-user avatar-title font-22 text-white"></i>
+                        <!-- Caretakers -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-warning rounded shadow-lg">
+                                                <i class="fe-user avatar-title font-22 text-white"></i>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-6 text-end">
-                                        <h3 class="text-dark my-1">
-                                            <span data-plugin="counterup">{{ $caretaker_count }}</span>
-                                        </h3>
-                                        <p class="text-muted mb-0 card-label">Caretakers</p>
+                                        <div class="col-6 text-end">
+                                            <h3 class="text-dark my-1">
+                                                <span data-plugin="counterup">{{ $caretaker_count }}</span>
+                                            </h3>
+                                            <p class="text-muted mb-0 card-label">Caretakers</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
 
                     <!-- Donation Amount -->
                     <div class="col-md-6 col-xl-3">
@@ -176,25 +185,27 @@
                     </div>
 
                     <!-- Projects -->
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-6">
-                                        <div class="avatar-sm bg-secondary rounded shadow-lg">
-                                            <i class="fe-briefcase avatar-title font-22 text-white"></i>
+                    @if(auth('admin')->check())
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-secondary rounded shadow-lg">
+                                                <i class="fe-briefcase avatar-title font-22 text-white"></i>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-6 text-end">
-                                        <h3 class="text-dark my-1">
-                                            <span data-plugin="counterup">{{ $projects_count }}</span>
-                                        </h3>
-                                        <p class="text-muted mb-0 card-label">Projects</p>
+                                        <div class="col-6 text-end">
+                                            <h3 class="text-dark my-1">
+                                                <span data-plugin="counterup">{{ $projects_count }}</span>
+                                            </h3>
+                                            <p class="text-muted mb-0 card-label">Projects</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
 
                 </div>
 

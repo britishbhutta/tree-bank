@@ -43,7 +43,7 @@
                                         </tr>
                                         <tr>
                                             <th>Donated To</th>
-                                            <td>{{ optional($tree->donations->first())->users->name ?? 'N/A' }}</td>
+                                            <td>{{ optional($tree->donationsOut?->users)->name ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <th>Donation Out #</th>
@@ -59,9 +59,18 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Planted Status</th>
+                                            <th>Tree Name</th>
                                             <td>
                                                 <span class="editable"
+                                                    data-field="tree_type">{{ $tree->treeName->name ?? 'N/A' }}</span>
+                                                <input type="text" class="form-control d-none"
+                                                    value="{{ $tree->treeTypes->name ?? '' }}">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Planted Status</th>
+                                            <td>
+                                                <span class="editable-select"
                                                     data-field="planting_status">{{ $tree->planting_status ? 'Yes' : 'No' }}</span>
                                                 <select class="form-control d-none">
                                                     <option value="1" {{ $tree->planting_status ? 'selected' : '' }}>
@@ -201,7 +210,7 @@
                                         <tr>
                                             <th>Death</th>
                                             <td>
-                                                <span class="editable"
+                                                <span class="editable-select"
                                                     data-field="death">{{ $tree->death ? 'Yes' : 'No' }}</span>
                                                 <select class="form-control d-none">
                                                     <option value="1" {{ $tree->death ? 'selected' : '' }}>Yes
@@ -237,7 +246,7 @@
                             </div>
 
                             <div class="col-12 mt-4">
-                                <a href="{{ route('admin.trees.index') }}" class="btn btn-secondary">Back to List</a>
+                                <a href="{{ route('trees.index') }}" class="btn btn-secondary">Back to List</a>
                             </div>
                         </div>
 
@@ -249,6 +258,12 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            window.isAdminLoggedIn = {{ auth('admin')->check() ? 'true' : 'false' }};
+            if(window.isAdminLoggedIn){
+                var path = `/admin`;
+                }else{
+                var path = `/my`;
+                }
 
             const alertBox = document.getElementById('alert-success');
 
@@ -271,7 +286,7 @@
                         span.classList.remove('d-none');
                         return;
                     }
-                    fetch('/admin/trees/{{ $tree->id }}', {
+                    fetch(`${path}/trees/{{ $tree->id }}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -320,7 +335,7 @@
                         span.classList.remove('d-none');
                         return;
                     }
-                    fetch('/admin/trees/{{ $tree->id }}', {
+                    fetch(`${path}/trees/{{ $tree->id }}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -358,7 +373,7 @@
                         formData.append('photos[]', this.files[0]);
                         formData.append('photo_id', container.dataset.id);
                         formData.append('_token', '{{ csrf_token() }}');
-                        fetch('/admin/trees/{{ $tree->id }}', {
+                        fetch(`${path}/trees/{{ $tree->id }}`, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -376,13 +391,14 @@
                     });
                 });
             });
-
+            
             // Delete Photo
             document.querySelectorAll('.delete-photo').forEach(span => {
                 span.addEventListener('click', function() {
                     const id = this.dataset.id;
                     if (!confirm('Are you sure you want to delete this photo?')) return;
-                    fetch('/admin/photos/' + id, {
+                    
+                    fetch(`${path}/photos/` + id, {
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -409,7 +425,7 @@
                     }
                     formData.append('_token', '{{ csrf_token() }}');
 
-                    fetch('{{ route('admin.trees.uploadPhotos', $tree->id) }}', {
+                    fetch('{{ route('trees.uploadPhotos', $tree->id) }}', {
                             method: 'POST',
                             body: formData
                         })

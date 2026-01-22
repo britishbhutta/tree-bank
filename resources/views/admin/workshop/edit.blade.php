@@ -184,7 +184,7 @@
     @endif
 </div>
 
-<form method="POST" action="{{ route('admin.workshop.update', $workshop->id) }}" enctype="multipart/form-data">
+<form method="POST" action="{{ route('workshop.update', $workshop->id) }}" enctype="multipart/form-data">
     @csrf
     @method('PUT')
 

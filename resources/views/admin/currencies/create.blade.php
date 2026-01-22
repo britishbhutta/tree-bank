@@ -15,12 +15,12 @@
                                 Add New Currency
                             </h4>
 
-                            <a href="{{ route('admin.currencies') }}" class="btn btn-secondary">
+                            <a href="{{ route('currencies') }}" class="btn btn-secondary">
                                 Back
                             </a>
                         </div>
 
-                        <form method="POST" action="{{ route('admin.storeCurrency') }}">
+                        <form method="POST" action="{{ route('storeCurrency') }}">
                             @csrf
 
                             {{-- Name & Symbol --}}

@@ -15,12 +15,12 @@
                                 Edit Currency
                             </h4>
 
-                            <a href="{{ route('admin.currencies') }}" class="btn btn-secondary">
+                            <a href="{{ route('currencies') }}" class="btn btn-secondary">
                                 Back
                             </a>
                         </div>
 
-                        <form method="POST" action="{{ route('admin.updateCurrency', $currency->id) }}">
+                        <form method="POST" action="{{ route('updateCurrency', $currency->id) }}">
                             @csrf
                             @method('PUT')
 

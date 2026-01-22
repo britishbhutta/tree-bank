@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'auth' => \App\Http\MIddleware\Authenticate::class,
+            'frontEndAuth' => \App\Http\MIddleware\FrontEndAuth::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

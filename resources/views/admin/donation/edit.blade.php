@@ -20,22 +20,23 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{ route('admin.donation.update', $donation->id) }}">
+                        <form method="POST" action="{{ route('donation.update', $donation->id) }}">
                             @csrf
                             @method('PUT')
 
                             <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label>Donor</label>
-                                    <select name="user_id" class="form-control" required>
-                                        @foreach ($users as $user)
-                                            <option value="{{ $user->id }}"
-                                                {{ $donation->user_id == $user->id ? 'selected' : '' }}>{{ $user->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
+                                @if(auth('admin')->check())
+                                    <div class="col-md-6 mb-3">
+                                        <label>Donor</label>
+                                        <select name="user_id" class="form-control" required>
+                                            @foreach ($users as $user)
+                                                <option value="{{ $user->id }}"
+                                                    {{ $donation->user_id == $user->id ? 'selected' : '' }}>{{ $user->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
                                 <div class="col-md-6 mb-3">
                                     <label>Project</label>
                                     <select name="project_id" id="project_id" class="form-control" required>
@@ -209,8 +210,11 @@
         const donationId = "{{ $donation->id }}";
         const amountInput = document.querySelector('input[name="amount"]');
         const amountLabel = amountInput.previousElementSibling;
+        window.isAdminLoggedIn = {{ auth('admin')->check() ? 'true' : 'false' }};
+
 
         function filterWorkshops() {
+            wsSelect.value = '';
             const pid = projectSelect.value;
             Array.from(wsSelect.options).forEach(opt => {
                 if (!opt.value) return;
@@ -328,6 +332,12 @@
             }
         });
 
+        if(window.isAdminLoggedIn){
+           var path = `/admin`;
+        }else{
+           var path = `/my`;
+        }
+
         document.addEventListener('change', async e => {
             if (e.target.classList.contains('tree-type')) {
                 const typeId = e.target.value;
@@ -338,7 +348,7 @@
                     return;
                 }
 
-                const res = await fetch(`/admin/tree-names/${typeId}`);
+                const res = await fetch(`${path}/tree-names/${typeId}`);
                 const data = await res.json();
                 nameSelect.innerHTML = '<option value="">Select Name</option>';
                 data.forEach(tree => {
@@ -357,7 +367,7 @@
                 const selectedNameId = nameSelect.dataset.selected;
                 if (!typeSelect.value) return;
 
-                const res = await fetch(`/admin/tree-names/${typeSelect.value}`);
+                const res = await fetch(`${path}/tree-names/${typeSelect.value}`);
                 const data = await res.json();
                 nameSelect.innerHTML = '<option value="">Select Name</option>';
                 data.forEach(tree => {

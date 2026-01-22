@@ -23,7 +23,7 @@
         </td>
 
         <td>
-            <a href="{{ route('admin.trees.show', $tree->id) }}" class="btn btn-info btn-sm">
+            <a href="{{ route('trees.show', $tree->id) }}" class="btn btn-info btn-sm">
                 View
             </a>
         </td>

@@ -33,7 +33,7 @@
                                 </div>
                             @endif
 
-                            <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
+                            <form action="{{ route('users.update', $user->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
 
@@ -158,7 +158,7 @@
                                     {{-- BUTTONS --}}
                                     <div class="col-12 text-end mt-4">
                                         <button class="btn btn-primary">Update</button>
-                                        <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
+                                        <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">
                                             Back
                                         </a>
                                     </div>

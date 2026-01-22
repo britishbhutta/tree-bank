@@ -28,23 +28,51 @@ class TreeController extends Controller
 
     public function index(Request $request)
     {
-        $trees = Tree::with(['projects', 'treeTypes', 'donations.users'])
+        $user = auth()->user();
+        if(auth('admin')->check()){
+            $trees = Tree::with(['projects', 'treeTypes', 'donations.users'])
+                ->when($request->tree_id, function ($q) use ($request) {
+                    $q->where('id', $request->tree_id);
+                })
+                ->when($request->project_id, function ($q) use ($request) {
+                    $q->where('project_id', $request->project_id);
+                })
+                ->when($request->donation_id, function ($q) use ($request) {
+                    $q->where('donation_id', $request->donation_id);
+                })
+                ->when($request->death !== null && $request->death !== '', function ($q) use ($request) {
+                    $q->where('death', $request->death);
+                })
+                ->when($request->user_id, function ($q) use ($request) {
+                    $q->whereHas('donations', function ($donation) use ($request) {
+                        $donation->where('user_id', $request->user_id);
+                    });
+                })
+                ->latest()
+                ->paginate(10);
+            $donations = Donation::where('type','Trees')->where('flow','In' )->get();
+        }
+        if($user && ( $user->role == 1 || $user->role == 2) ){
+            $trees = Tree::with(['projects', 'treeTypes', 'donations.users'])
             ->when($request->tree_id, function ($q) use ($request) {
                 $q->where('id', $request->tree_id);
             })
             ->when($request->project_id, function ($q) use ($request) {
                 $q->where('project_id', $request->project_id);
             })
+            ->when($request->donation_id, function ($q) use ($request) {
+                    $q->where('donation_id', $request->donation_id);
+                })
             ->when($request->death !== null && $request->death !== '', function ($q) use ($request) {
                 $q->where('death', $request->death);
             })
-            ->when($request->user_id, function ($q) use ($request) {
-                $q->whereHas('donations', function ($donation) use ($request) {
-                    $donation->where('user_id', $request->user_id);
-                });
+            ->whereHas('donations', function ($donation) {
+                $donation->where('user_id', auth()->id());
             })
             ->latest()
             ->paginate(10);
+            $donations = Donation::where('user_id',$user->id)->where('type','Trees')->where('flow','In' )->get();
+        }
 
         if ($request->ajax()) {
             return view('admin.trees.partials.table', compact('trees'))->render();
@@ -52,8 +80,9 @@ class TreeController extends Controller
 
         $projects = Project::all();
         $users = User::whereIn('role', [1, 2, 5])->get();
+        
 
-        return view('admin.trees.index', compact('trees', 'projects', 'users'));
+        return view('admin.trees.index', compact('trees', 'projects', 'users','donations'));
     }
 
     public function show(Tree $tree)

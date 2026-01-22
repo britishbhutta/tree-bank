@@ -24,27 +24,52 @@
                             <div class="alert alert-success">{{ session('success') }}</div>
                         @endif
 
-                        <form method="POST" action="{{ route('admin.donation.store') }}">
+                        <form method="POST" action="{{ route('donation.store') }}">
                             @csrf
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label>Donation Number</label>
-                                    <input type="text" class="form-control" value="{{ $donationNumber }}" readonly>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label>Donor</label>
-                                    <select name="user_id" class="form-control">
-                                        <option value="">Select Donor</option>
-                                        @foreach ($users as $user)
-                                            <option value="{{ $user->id }}"
-                                                {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                                {{ $user->name }}
-                                            </option>
-                                        @endforeach
+                                    <label>Flow</label>
+                                    <select id="flow" name="flow" class="form-control">
+                                        <option value="">Select</option>
+                                        <option value="In">In</option>
+                                        @if(auth('admin')->check())
+                                            <option value="Out">Out</option>
+                                        @else
+                                            <option value="Own">Own</option>
+                                        @endif
                                     </select>
                                 </div>
+                                {{-- <div class="col-md-6 mb-3">
+                                    <label>Donation Number</label>
+                                    <input type="text" class="form-control" value="{{ $donationNumber }}" readonly>
+                                </div> --}}
+                                @if(auth('admin')->check())
+                                    <div class="col-md-6 mb-3">
+                                        <label>Donor</label>
+                                        <select name="user_id" class="form-control">
+                                            <option value="">Select Donor</option>
+                                            @foreach ($users as $user)
+                                                <option value="{{ $user->id }}"
+                                                    {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                                    {{ $user->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @else
+                                    <input name="user_id" value="{{ auth()->user()->id }}" class="form-control" hidden>
+                                @endif
 
+                                <div class="col-md-6 mb-3">
+                                    <label>Type</label>
+                                    <select id="type" name="type" class="form-control">
+                                        <option value="">Select</option>
+                                        <option value="Trees" {{ old('type') == 'Trees' ? 'selected' : '' }}>Trees
+                                        </option>
+                                        <option value="Funds" {{ old('type') == 'Funds' ? 'selected' : '' }}>Funds
+                                        </option>
+                                    </select>
+                                </div>
                                 <div class="col-md-6 mb-3">
                                     <label>Project</label>
                                     <select name="project_id" id="project_id" class="form-control">
@@ -70,18 +95,10 @@
                                         @endforeach
                                     </select>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
-                                    <label>Type</label>
-                                    <select id="type" name="type" class="form-control">
-                                        <option value="">Select</option>
-                                        <option value="Trees" {{ old('type') == 'Trees' ? 'selected' : '' }}>Trees
-                                        </option>
-                                        <option value="Funds" {{ old('type') == 'Funds' ? 'selected' : '' }}>Funds
-                                        </option>
-                                    </select>
+                                    <label>Amount</label>
+                                    <input type="number" name="amount" class="form-control">
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <label>Fund Type</label>
                                     <select id="fund_type" name="fund_type" class="form-control">
@@ -89,20 +106,6 @@
                                         <option value="Cash">Cash</option>
                                         <option value="Cheque">Cheque</option>
                                     </select>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label>Flow</label>
-                                    <select id="flow" name="flow" class="form-control">
-                                        <option value="">Select</option>
-                                        <option value="In">In</option>
-                                        <option value="Out">Out</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label>Amount</label>
-                                    <input type="number" name="amount" class="form-control">
                                 </div>
                             </div>
 
@@ -183,8 +186,10 @@
         const cardsContainer = document.getElementById('available-tree-cards');
         const amountInput = document.querySelector('input[name="amount"]');
         const amountLabel = amountInput.previousElementSibling;
+        window.isAdminLoggedIn = {{ auth('admin')->check() ? 'true' : 'false' }};
 
         projectSelect.addEventListener('change', () => {
+            wsSelect.value = '';
             wsSelect.disabled = !projectSelect.value;
 
             [...wsSelect.options].forEach(opt => {
@@ -306,6 +311,13 @@
             }
         });
 
+        
+        if(window.isAdminLoggedIn){
+           var path = `/admin`;
+        }else{
+           var path = `/my`;
+        }
+
         document.addEventListener('change', e => {
             if (e.target.classList.contains('tree-type')) {
                 const typeId = e.target.value;
@@ -313,7 +325,7 @@
 
                 nameSelect.innerHTML = '<option value="">Loading...</option>';
 
-                fetch(`/admin/tree-names/${typeId}`)
+                fetch(`${path}/tree-names/${typeId}`)
                     .then(res => res.json())
                     .then(data => {
                         nameSelect.innerHTML = '<option value="">Select Name</option>';

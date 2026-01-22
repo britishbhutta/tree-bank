@@ -23,7 +23,7 @@
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
 
-                    <form method="POST" action="{{ route('admin.tree_types.store') }}">
+                    <form method="POST" action="{{ route('tree_types.store') }}">
                         @csrf
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
@@ -36,7 +36,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary">Submit</button>
-                        <a href="{{ route('admin.tree_types.index') }}" class="btn btn-secondary">Back</a>
+                        <a href="{{ route('tree_types.index') }}" class="btn btn-secondary">Back</a>
                     </form>
 
                 </div>

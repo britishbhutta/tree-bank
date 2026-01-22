@@ -17,7 +17,7 @@
                         </h4>
                     </div>
 
-                    <form method="POST" action="{{ route('admin.projects.update', $project) }}">
+                    <form method="POST" action="{{ route('projects.update', $project) }}">
                         @csrf
                         @method('PUT')
 

@@ -21,7 +21,7 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="fw-bold">Workshops</h4>
-                    <a href="{{ route('workshop.create') }}" class="btn btn-primary">Add Workshop</a>
+                    <a href="{{ route('workshop.create') }}" class="btn btn-primary">+ Add Workshop</a>
                 </div>
 
                 <div class="table-responsive">
@@ -65,12 +65,13 @@
                                         </td> --}}
                                     <td class="text-nowrap">
                                         <a href="{{ route('workshop.edit', $workshop->id) }}"
-                                            class="btn btn-sm btn-warning">View / Edit</a>
+                                            title="Edit">
+                                                <img src="{{asset('admin/assets/images/edit.gif') }}" width="30"></a>
                                         <form action="{{ route('workshop.destroy', $workshop->id) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('Are you sure?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="btn btn-sm btn-danger">Delete</button>
+                                            <button title="Delete" style="border: none; background: none; padding: 0;"><img src="{{asset('admin/assets/images/delete.gif') }}" width="30"></button>
                                         </form>
                                     </td>
                                 </tr>

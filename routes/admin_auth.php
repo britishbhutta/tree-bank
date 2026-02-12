@@ -86,6 +86,8 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/trees', [TreeController::class, 'index'])->name('trees.index');
     Route::get('trees/{tree}', [TreeController::class, 'show'])->name('trees.show');
     Route::put('trees/{tree}', [TreeController::class, 'update'])->name('trees.update');
+    Route::get('/reverse-geocode', [TreeController::class, 'reverseGeocode']);
+
     // update photos
     Route::delete('photos/{id}', [TreeController::class,'deletePhoto'])->name('photos.delete');
     Route::post('admin/trees/{tree}/photos', [TreeController::class, 'uploadPhotos'])->name('trees.uploadPhotos');
@@ -106,6 +108,11 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('donation/{donation}/edit', [DonationController::class,'edit'])->name('donation.edit');
     Route::put('donation/{donation}', [DonationController::class,'update'])->name('donation.update');
     Route::delete('donation/{donation}', [DonationController::class,'destroy'])->name('donation.destroy');
+    Route::get('donation/buyTrees', [DonationController::class,'buyTreesIndex'])->name('donation.buy.trees');
+    Route::get('donation/buyTreesCreate', [DonationController::class,'buyTreesCreate'])->name('donation.buy.trees.create');
+    Route::post('donation/buyTreeStore', [DonationController::class,'buyTreeStore'])->name('buyTreesStore');
+
+
 
     //Currencies
     Route::get('currencies',[CurrencyController::class, 'index'])->name('currencies');

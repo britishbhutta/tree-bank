@@ -44,8 +44,8 @@
                                             @csrf
                                             @method('DELETE')
                                             <button onclick="return confirm('Are you sure?')"
-                                                class="btn btn-danger btn-sm">
-                                                Delete
+                                                title="Delete" style="border: none; background: none; padding: 0;">
+                                                <img src="{{asset('admin/assets/images/delete.gif') }}" width="30">
                                             </button>
                                         </form>
                                     </td>

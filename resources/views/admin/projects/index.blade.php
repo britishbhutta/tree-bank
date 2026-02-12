@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-body">
                         <a href="{{ route('projects.create') }}" class="btn btn-primary mb-3">
-                            Add Project
+                           + Add Project
                         </a>
 
                         @if (session('success'))
@@ -48,14 +48,14 @@
                                         </td>
                                         <td>
                                             <a href="{{ route('projects.edit', $project) }}"
-                                                class="btn btn-warning btn-sm">Edit</a>
+                                                title="Edit">
+                                                <img src="{{asset('admin/assets/images/edit.gif') }}" width="30"></a>
 
                                             <form action="{{ route('projects.destroy', $project) }}" method="POST"
                                                 class="d-inline">
                                                 @csrf @method('DELETE')
                                                 <button onclick="return confirm('Are you sure?')"
-                                                    class="btn btn-danger btn-sm">
-                                                    Delete
+                                                    class="ms-2"title="Delete" style="border: none; background: none; padding: 0;"><img src="{{asset('admin/assets/images/delete.gif') }}" width="30">
                                                 </button>
                                             </form>
                                         </td>

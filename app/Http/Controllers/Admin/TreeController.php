@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\Tree;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class TreeController extends Controller
@@ -38,7 +39,10 @@ class TreeController extends Controller
                     $q->where('project_id', $request->project_id);
                 })
                 ->when($request->donation_id, function ($q) use ($request) {
-                    $q->where('donation_id', $request->donation_id);
+                    $q->where(function ($query) use ($request) {
+                        $query->where('donation_id', $request->donation_id)
+                            ->orWhere('donation_id_out', $request->donation_id);
+                    });
                 })
                 ->when($request->death !== null && $request->death !== '', function ($q) use ($request) {
                     $q->where('death', $request->death);
@@ -50,7 +54,9 @@ class TreeController extends Controller
                 })
                 ->latest()
                 ->paginate(10);
-            $donations = Donation::where('type','Trees')->where('flow','In' )->get();
+            $donationsIn = Donation::where('type','Trees')->where('flow','In' )->get();
+            $donationsOut = Donation::where('type','Trees')->where('flow','out' )->get();
+            $donationsOwn = Donation::where('type','Trees')->where('flow','Own' )->get();
         }
         if($user && ( $user->role == 1 || $user->role == 2) ){
             $trees = Tree::with(['projects', 'treeTypes', 'donations.users'])
@@ -71,7 +77,9 @@ class TreeController extends Controller
             })
             ->latest()
             ->paginate(10);
-            $donations = Donation::where('user_id',$user->id)->where('type','Trees')->where('flow','In' )->get();
+            $donationsIn = Donation::where('user_id',$user->id)->where('type','Trees')->where('flow','In' )->get();
+            $donationsOut = Donation::where('user_id',$user->id)->where('type','Trees')->where('flow','Out' )->get();
+            $donationsOwn = Donation::where('user_id',$user->id)->where('type','Trees')->where('flow','Own' )->get();
         }
 
         if ($request->ajax()) {
@@ -82,7 +90,7 @@ class TreeController extends Controller
         $users = User::whereIn('role', [1, 2, 5])->get();
         
 
-        return view('admin.trees.index', compact('trees', 'projects', 'users','donations'));
+        return view('admin.trees.index', compact('trees', 'projects', 'users','donationsIn','donationsOut','donationsOwn'));
     }
 
     public function show(Tree $tree)
@@ -156,4 +164,27 @@ class TreeController extends Controller
             'message' => 'Photo(s) uploaded successfully!',
         ]);
     }
+    public function reverseGeocode(Request $request)
+{
+    $lat = $request->lat;
+    $lng = $request->lng;
+
+    $url = "https://nominatim.openstreetmap.org/reverse"
+         . "?format=json"
+         . "&lat={$lat}"
+         . "&lon={$lng}"
+         . "&accept-language=en";
+
+    $response = Http::withHeaders([
+        'User-Agent' => 'TreeApp/1.0 (admin@yourapp.com)'
+    ])->get($url);
+
+    if ($response->successful()) {
+        return response()->json($response->json());
+    }
+
+    return response()->json(['error' => 'Unable to fetch location'], 500);
+}
+
+
 }

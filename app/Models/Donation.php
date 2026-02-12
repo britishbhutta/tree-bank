@@ -12,6 +12,7 @@ class Donation extends Model
         'type',
         'description',
         'amount',
+        'no_of_bought_trees',
         'fund_type',
         'flow',
         'donation_number',

@@ -61,6 +61,8 @@ if($currentPrefix == 'my'){
         Route::get('/trees', [TreeController::class, 'index'])->name('trees.index');
         Route::get('trees/{tree}', [TreeController::class, 'show'])->name('trees.show');
         Route::put('trees/{tree}', [TreeController::class, 'update'])->name('trees.update');
+        Route::get('/reverse-geocode', [TreeController::class, 'reverseGeocode']);
+
         // update photos
         Route::delete('photos/{id}', [TreeController::class,'deletePhoto'])->name('photos.delete');
         Route::post('admin/trees/{tree}/photos', [TreeController::class, 'uploadPhotos'])->name('trees.uploadPhotos');

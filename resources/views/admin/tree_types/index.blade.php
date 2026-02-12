@@ -16,7 +16,7 @@
                         </div>
                     @endif
 
-                    <a href="{{ route('tree_types.create') }}" class="btn btn-primary mb-3">Add New Tree Type</a>
+                    <a href="{{ route('tree_types.create') }}" class="btn btn-primary mb-3">+ Add New Tree Type</a>
 
                     <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                         <table class="table table-bordered table-striped table-hover align-middle mb-0">
@@ -36,11 +36,11 @@
                                         <td class="text-wrap">{{ $treeType->description }}</td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
-                                                <a href="{{ route('tree_types.edit', $treeType->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                                <a href="{{ route('tree_types.edit', $treeType->id) }}" title="Edit">
+                                                <img src="{{asset('admin/assets/images/edit.gif') }}" width="30"></a>
                                                 <a href="{{ route('tree_types.delete', $treeType->id) }}" 
-                                                   class="btn btn-sm btn-danger"
-                                                   onclick="return confirm('Are you sure you want to delete this tree type?')">
-                                                   Delete
+                                                   class="ms-2"
+                                                   onclick="return confirm('Are you sure you want to delete this tree type?')"title="Delete" style="border: none; background: none; padding: 0;"><img src="{{asset('admin/assets/images/delete.gif') }}" width="30">
                                                 </a>
                                             </div>
                                         </td>

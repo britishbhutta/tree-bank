@@ -67,18 +67,16 @@
                                         </td>
 
                                         <td class="text-end">
-                                            <a href="{{ route('users.edit', $user->id) }}"
-                                               class="btn btn-sm btn-warning">
-                                                Edit
+                                            <a href="{{ route('users.edit', $user->id) }}" title="Edit">
+                                                <img src="{{asset('admin/assets/images/edit.gif') }}" width="30">
                                             </a>
 
                                             <form action="{{ route('users.destroy', $user->id) }}"
                                                   method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button onclick="return confirm('Are you sure?')"
-                                                        class="btn btn-sm btn-danger">
-                                                    Delete
+                                                <button onclick="return confirm('Are you sure?')"style="border: none; background: none; padding: 0;" title="Delete" class="ms-2">
+                                                    <img src="{{asset('admin/assets/images/delete.gif') }}" width="30">
                                                 </button>
                                             </form>
                                         </td>

@@ -25,7 +25,7 @@
                         @endif
 
                         {{-- Add New Tree Name button --}}
-                        <a href="{{ route('tree_names.add') }}" class="btn btn-primary mb-3">Add New Tree Name</a>
+                        <a href="{{ route('tree_names.add') }}" class="btn btn-primary mb-3">+ Add New Tree Name</a>
 
                         <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                             <table class="table table-bordered table-striped table-hover align-middle mb-0">
@@ -49,8 +49,8 @@
                                                 <div class="d-flex justify-content-center gap-1">
 
                                                     <a href="{{ route('tree_names.edit', $treeName->id) }}"
-                                                        class="btn btn-sm btn-warning">
-                                                        Edit
+                                                        title="Edit">
+                                                    <img src="{{asset('admin/assets/images/edit.gif') }}" width="30">
                                                     </a>
 
                                                     <form action="{{ route('tree_names.delete', $treeName->id) }}"
@@ -58,7 +58,7 @@
                                                         onsubmit="return confirm('Are you sure you want to delete this tree name?')">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                                        <button type="submit" class="ms-2"title="Delete" style="border: none; background: none; padding: 0;"><img src="{{asset('admin/assets/images/delete.gif') }}" width="30"></button>
                                                     </form>
 
                                                 </div>

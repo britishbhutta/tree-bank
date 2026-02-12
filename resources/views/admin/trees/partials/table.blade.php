@@ -23,8 +23,9 @@
         </td>
 
         <td>
-            <a href="{{ route('trees.show', $tree->id) }}" class="btn btn-info btn-sm">
-                View
+            <a href="{{ route('trees.show', $tree->id) }}" title="Edit / View">
+                <img src="{{asset('admin/assets/images/edit.gif') }}" width="30">
+                <img src="{{asset('admin/assets/images/view.gif') }}" width="30">
             </a>
         </td>
     </tr>

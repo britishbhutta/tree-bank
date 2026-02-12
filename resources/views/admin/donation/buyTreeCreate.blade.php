@@ -1,17 +1,12 @@
 @extends('admin.layouts.master')
 @section('title', 'Add Donation')
-<?php $treeBuyCondition =  auth('admin')->check() && isset($source) && $source === 'buy_trees' && isset($donation) ?>
 @section('content')
     <main class="content-page">
         <div class="content mt-4">
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-body">
-                        @if($treeBuyCondition)
-                            <h4 class="fw-bold mb-4 border-bottom pb-2">Buy Trees From A Donation</h4>
-                        @else
-                            <h4 class="fw-bold mb-4 border-bottom pb-2">Add Donation</h4>
-                        @endif
+                        <h4 class="fw-bold mb-4 border-bottom pb-2">Buy Trees From A Donation</h4>
                         @if ($errors->any())
                             <div class="alert alert-danger">
                                 <ul class="mb-0">
@@ -25,52 +20,21 @@
                         @if (session('success'))
                             <div class="alert alert-success">{{ session('success') }}</div>
                         @endif
-                        @if($treeBuyCondition)
-                            <p><b>Donation No: {{ $donation->id }}</b></p>
-                        @endif
-                        <form method="POST" action="{{ route('donation.store') }}">
+                        <p><b>Donation No: {{ $donation->id }}</b></p>
+                        <form method="POST" action="{{ route('buyTreesStore') }}">
                             @csrf
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3" id="flowDiv">
                                     <label>Flow</label>
                                     <select id="flow" name="flow" class="form-control">
-                                        <option value="">Select</option>
-                                        <option value="In">In</option>
-                                        @if(auth('admin')->check())
-                                            <option value="Out">Out</option>
-                                        @else
-                                            <option value="Own">Own</option>
-                                        @endif
                                     </select>
                                 </div>
-                                {{-- <div class="col-md-6 mb-3">
-                                    <label>Donation Number</label>
-                                    <input type="text" class="form-control" value="{{ $donationNumber }}" readonly>
-                                </div> --}}
-                                @if(auth('admin')->check())
-                                    <div class="col-md-6 mb-3">
-                                        <label id="user_label">Donor</label>
-                                        <select name="user_id" class="form-control">
-                                            <option value="">Select Donor</option>
-                                            @foreach ($users as $user)
-                                                <option value="{{ $user->id }}"
-                                                    {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                                    {{ $user->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @else
-                                    <input name="user_id" value="{{ auth()->user()->id }}" class="form-control" hidden>
-                                @endif
-
+                                    <input name="donation_id" value="{{ $donation->id }}" class="form-control" hidden>
                                 <div class="col-md-6 mb-3">
                                     <label>Type</label>
                                     <select id="type" name="type" class="form-control">
                                         <option value="">Select</option>
                                         <option value="Trees" {{ old('type') == 'Trees' ? 'selected' : '' }}>Trees
-                                        </option>
-                                        <option value="Funds" {{ old('type') == 'Funds' ? 'selected' : '' }}>Funds
                                         </option>
                                     </select>
                                 </div>
@@ -100,17 +64,10 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label>Amount</label>
+                                    <label>No Of Trees</label>
                                     <input type="number" name="amount" class="form-control">
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label>Fund Type</label>
-                                    <select id="fund_type" name="fund_type" class="form-control">
-                                        <option value="">Select</option>
-                                        <option value="Cash">Cash</option>
-                                        <option value="Cheque">Cheque</option>
-                                    </select>
-                                </div>
+                                
                             </div>
 
                             {{-- TREE SECTION --}}
@@ -192,7 +149,7 @@
         const amountLabel = amountInput.previousElementSibling;
         window.isAdminLoggedIn = {{ auth('admin')->check() ? 'true' : 'false' }};
         const fundsOption = typeSelect.querySelector('option[value="Funds"]');
-
+        document.getElementById('flowDiv').style.display = 'none';
         flowSelect.addEventListener('change', () => {
             if (flowSelect.value === 'Own') {
                 if (fundsOption) {

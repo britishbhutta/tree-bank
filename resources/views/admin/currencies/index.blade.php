@@ -33,7 +33,7 @@
                                 Run Cron Job
                             </a>
                             <a href="{{ route('createCurrency') }}" class="btn btn-success">
-                                Add Currency
+                                + Add Currency
                             </a>
                         </div>
                     </div>
@@ -77,10 +77,10 @@
                                         </td>
                                         <td class="text-center">
                                             <a href="{{ route('editCurrency', $currency->id) }}" class="text-primary me-2" title="Edit">
-                                                <i class="fa-solid fa-pen-to-square"></i>
+                                                <img src="{{asset('admin/assets/images/edit.gif') }}" width="30">
                                             </a>
                                             <a href="{{ route('deleteCurrency', $currency->id) }}" class="text-danger btn-delete" title="Delete" onclick="return confirm('Are you sure you want to delete this currency?')">
-                                                <i class="fa-solid fa-trash"></i>
+                                                <img src="{{asset('admin/assets/images/delete.gif') }}" width="30">
                                             </a>
                                         </td>
                                     </tr>

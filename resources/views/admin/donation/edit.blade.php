@@ -36,6 +36,8 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                @else
+                                    <input type="hidden" name="user_id" value={{ auth()->id() }}>
                                 @endif
                                 <div class="col-md-6 mb-3">
                                     <label>Project</label>

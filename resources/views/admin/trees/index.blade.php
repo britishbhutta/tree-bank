@@ -3,6 +3,14 @@
 @section('title', 'Trees')
 
 @section('content')
+<style>
+    .or-text {
+        margin-top: 6px;       /* align with select height */
+        font-weight: 600;
+        color: #6c757d;
+        white-space: nowrap;  /* prevents wrapping */
+    }
+</style>
     <main class="content-page">
         <div class="content mt-4">
             <div class="container-fluid">
@@ -13,12 +21,20 @@
                         </div>
 
                         <form id="searchForm" class="row g-2 mb-4">
-                            <div class="col-md-3">
+                            @if(auth('admin')->check())
+                                <div class="col-md-3">
+                            @else
+                                <div class="col-md-4">
+                            @endif
                                 <input type="text" name="tree_id" id="tree_id" class="form-control"
                                     placeholder="Search by Tree ID">
                             </div>
 
-                            <div class="col-md-3">
+                            @if(auth('admin')->check())
+                                <div class="col-md-3">
+                            @else
+                                <div class="col-md-4">
+                            @endif
                                 <select name="project_id" id="project_id" class="form-control">
                                     <option value="">-- Select Project --</option>
                                     @foreach ($projects as $project)
@@ -28,7 +44,11 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            @if(auth('admin')->check())
+                                <div class="col-md-3">
+                            @else
+                                <div class="col-md-4">
+                            @endif
                                 <select name="death" id="death" class="form-control">
                                     <option value="">-- Death Status --</option>
                                     <option value="1">Dead</option>
@@ -46,21 +66,36 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            @endif
-                            @if(auth('admin')->check())
-                                <div class="col-md-3">
                             @else
-                                <div class="col-md-2">
+                                <div class="w-100"></div>
                             @endif
-                                <select name="donation_id" id="donation_id" class="form-control">
+                            <div class="d-flex align-items-center gap-4">
+                                <select name="donation_id" id="donation_id" class="form-control donation-select">
                                     <option value="">-- Select Donation In --</option>
-                                    @foreach ($donations as $donation)
+                                    @foreach ($donationsIn as $donation)
                                         <option value="{{ $donation->id }}">
                                             {{ $donation->donation_number }}
                                         </option>
                                     @endforeach
                                 </select>
-                                
+                            <span class="or-text">OR</span>
+                                <select name="donation_id_out" id="donation_id_out" class="form-control donation-select">
+                                    <option value="">-- Select Donation Out --</option>
+                                    @foreach ($donationsOut as $donation)
+                                        <option value="{{ $donation->id }}">
+                                            {{ $donation->donation_number }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            <span class="or-text">OR</span>
+                                <select name="donation_id_own" id="donation_id_own" class="form-control donation-select">
+                                    <option value="">-- Select Donation Own --</option>
+                                    @foreach ($donationsOwn as $donation)
+                                        <option value="{{ $donation->id }}">
+                                            {{ $donation->donation_number }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-md-1">
                                 <button type="button"
@@ -105,7 +140,21 @@
 
     <script>
         $(document).ready(function() {
+            function getSelectedDonation() {
+                let donationId = '';
+                $('.donation-select').each(function () {
+                    if ($(this).val()) {
+                        donationId = $(this).val();
+                    }
+                });
+                return donationId;
+            }
+            $('.donation-select').on('change', function () {
+                // reset other selects
+                $('.donation-select').not(this).val('');
 
+                fetchTrees();
+            });
             function fetchTrees() {
                 $.ajax({
                     url: "{{ route('trees.index') }}",
@@ -115,7 +164,7 @@
                         project_id: $('#project_id').val(),
                         death: $('#death').val(),
                         user_id: $('#user_id').val(),
-                        donation_id: $('#donation_id').val()
+                        donation_id: getSelectedDonation()
                     },
                     beforeSend: function() {
                         $('#treeTable').html(`
@@ -136,10 +185,7 @@
             }
 
             $('#tree_id').on('keyup', fetchTrees);
-            $('#project_id').on('change', fetchTrees);
-            $('#death').on('change', fetchTrees);
-            $('#user_id').on('change', fetchTrees);
-            $('#donation_id').on('change', fetchTrees);
+            $('#project_id, #death, #user_id').on('change', fetchTrees);
         });
     </script>
 @endpush

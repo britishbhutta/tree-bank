@@ -62,6 +62,12 @@
                                     List
                                 </a>
                             </li>
+                            <li>
+                                <a href="{{ route('donation.buy.trees')}}"
+                                    class="{{ request()->routeIs('donation.buy.trees') ? 'active' : '' }}">
+                                    Buy Trees
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>

@@ -12,10 +12,14 @@
                 @if (session('message'))
                     <div class="alert alert-danger">{{ session('message') }}</div>
                 @endif
-
+                <?php $treeBuyCondition =  auth('admin')->check() && isset($source) && $source === 'buy_trees' ?>
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="fw-bold">Donations</h4>
-                    <a href="{{ route('donation.create') }}" class="btn btn-primary">Add Donation</a>
+                    @if($treeBuyCondition)
+                        <h4 class="fw-bold">Buy Trees From Donation Funds</h4>
+                    @else
+                        <h4 class="fw-bold">Donations</h4>
+                        <a href="{{ route('donation.create') }}" class="btn btn-primary"> + Add Donation</a>
+                    @endif
                 </div>
 
                 <div class="table-responsive">
@@ -26,12 +30,21 @@
                                 @if(auth('admin')->check())
                                     <th>User</th>
                                 @endif
-                                <th>Project</th>
-                                <th>Workshop</th>
+                                @if(!$treeBuyCondition)
+                                    <th>Project</th>
+                                    <th>Workshop</th>
+                                @endif
                                 <th>Type</th>
-                                <th>Amount</th>
+                                @if(!$treeBuyCondition)
+                                    <th>Amount/Trees</th>
+                                @else
+                                    <th>Amount</th>
+                                @endif
+                                <th>Trees From Funds</th>
                                 <th>Fund Type</th>
-                                <th>Flow</th>
+                                @if(!$treeBuyCondition)
+                                    <th>Flow</th>
+                                @endif
                                 <th>Donation Number</th>
                                 <th>Actions</th>
                             </tr>
@@ -44,37 +57,52 @@
                                         <td>{{ $donation->users->name }}</td>
                                     @endif
                                     {{-- <td>{{ $donation->workshop?->projects?->name ?? '-' }}</td> --}}
-                                    <td>
-                                        @php
-                                            $projectName = null;
-                                            if ($donation->workshop && $donation->workshop->projects) {
-                                                $projectName = $donation->workshop->projects->name;
-                                            } elseif ($donation->trees->isNotEmpty()) {
-                                                $projectName = $donation->trees->first()->projects->name ?? null;
-                                            } else {
-                                                $outTree = \App\Models\Tree::where('donation_id_out', $donation->id)->first();
-                                                $projectName = $outTree?->projects?->name;
-                                            }
-                                        @endphp
+                                    @if(!$treeBuyCondition)    
+                                        <td>
+                                            @php
+                                                $projectName = null;
+                                                if ($donation->workshop && $donation->workshop->projects) {
+                                                    $projectName = $donation->workshop->projects->name;
+                                                } elseif ($donation->trees->isNotEmpty()) {
+                                                    $projectName = $donation->trees->first()->projects->name ?? null;
+                                                } else {
+                                                    $outTree = \App\Models\Tree::where('donation_id_out', $donation->id)->first();
+                                                    $projectName = $outTree?->projects?->name;
+                                                }
+                                            @endphp
 
-                                        {{ $projectName ?? '-' }}
-                                    </td>
-
-
-                                    <td>{{ $donation->workshop->name ?? 'N/A' }}</td>
+                                            {{ $projectName ?? '-' }}
+                                        </td>
+                                        <td>{{ $donation->workshop->name ?? 'N/A' }}</td>
+                                    @endif
                                     <td>{{ $donation->type }}</td>
                                     <td>{{ $donation->amount }}</td>
+                                    <td>{{ $donation->no_of_bought_trees ?? ' - ' }}</td>
                                     <td>{{ $donation->fund_type }}</td>
-                                    <td>{{ $donation->flow }}</td>
+                                    @if(!$treeBuyCondition)    
+                                        <td>{{ $donation->flow }}</td>
+                                    @endif
                                     <td>{{ $donation->donation_number }}</td>
                                     <td>
+                                        @if($treeBuyCondition)
+                                            <a href="{{ route('donation.create', ['source' => 'buy_trees', 'donation_id' => $donation->id]) }}" class="btn btn-sm btn-primary">Buy trees</a>
+                                        @endif
                                         <a href="{{ route('donation.edit', $donation->id) }}"
-                                            class="btn btn-sm btn-warning $donation->flow === 'Own ?? disabled">Edit</a>
+                                            class=" {{ 
+                                                $donation->no_of_bought_trees != null || $donation->flow === 'Own' 
+                                                || $donation->trees->contains(fn ($tree) => !is_null($tree->donation_id_out))
+                                                ? 'disabled' 
+                                                : '' 
+                                            }}" title="Edit">
+                                                <img src="{{asset('admin/assets/images/edit.gif') }}" width="30"></a>
                                         <form action="{{ route('donation.destroy', $donation->id) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('Are you sure?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="btn btn-sm btn-danger">Delete</button>
+                                            <button class="ms-2 {{ $donation->flow === 'Own' || $donation->trees->contains(fn ($tree) => !is_null($tree->donation_id_out))
+                                                ? 'disabled' 
+                                                : '' 
+                                            }}" title="Delete" style="border: none; background: none; padding: 0;"><img src="{{asset('admin/assets/images/delete.gif') }}" width="30"></button>
                                         </form>
                                     </td>
                                 </tr>

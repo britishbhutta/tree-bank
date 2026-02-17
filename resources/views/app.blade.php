@@ -14,7 +14,7 @@
         <!-- Scripts -->
         @routes
         @viteReactRefresh
-        @vite(['resources/js/app(react).jsx'])
+        @vite(['resources/js/app.jsx'])
         <link rel="shortcut icon" href="{{asset('admin/assets/images/favicon.ico') }}">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <script>

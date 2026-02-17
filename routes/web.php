@@ -71,8 +71,8 @@ if($currentPrefix == 'my'){
 }
 
 //Front End React Routes
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/react', [DashboardController::class, 'react'])->name('react');
+// Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/', [DashboardController::class, 'react'])->name('react');
 Route::post('/storeContactUs',[ContactUsController::class,'store'])->name('storeContactUs');
 
 //Count
